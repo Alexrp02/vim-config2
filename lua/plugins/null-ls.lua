@@ -9,6 +9,6 @@ return {
 				null_ls.builtins.formatting.isort
 			}
 		})
-		vim.keymap.set("n", "gf", vim.lsp.buf.format, {})
+		vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, {desc = "(C)ode (Format) the buffer"})
 	end
 }
