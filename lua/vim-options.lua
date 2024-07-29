@@ -1,6 +1,11 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Use tabs but no so long to indent
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = false
+
 vim.keymap.set({ "n", "i" }, "<C-s>", function()
 	if vim.api.nvim_get_mode().mode == 'i' then
 		vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<ESC>', true, false, true), 'n', true)
