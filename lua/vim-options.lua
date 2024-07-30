@@ -1,5 +1,7 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+vim.o.number = true
+vim.o.relativenumber = true
 
 -- Use tabs but no so long to indent
 vim.opt.tabstop = 4
