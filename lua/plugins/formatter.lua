@@ -6,7 +6,8 @@ return {
 			sources = {
 				null_ls.builtins.formatting.stylua,
 				null_ls.builtins.formatting.black,
-				null_ls.builtins.formatting.isort
+				null_ls.builtins.formatting.isort,
+				null_ls.builtins.formatting.rustfmt
 			}
 		})
 		vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, {desc = "(C)ode (Format) the buffer"})
