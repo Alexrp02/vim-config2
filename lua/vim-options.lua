@@ -26,7 +26,11 @@ vim.keymap.set({ "n", "i" }, "<C-s>", function()
 	--	vim.lsp.buf.format({ async = true }) -- Format the code
 end, { silent = true })
 
-vim.keymap.set("n", "<leader>qq", ":wqall!<CR>")
+-- vim.keymap.set("n", "<leader>qq", ":wqall!<CR>")
+vim.keymap.set("n", "<leader>qq", function()
+	vim.cmd("Neotree close")
+	vim.cmd("wqa")
+end)
 
 -- Navigation
 vim.keymap.set("n", "<C-h>", "<C-w>h")
