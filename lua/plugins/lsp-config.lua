@@ -6,10 +6,13 @@ return {
 		end,
 	},
 	{
+		"nvim-treesitter-context",
+	},
+	{
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "pyright", "rust_analyzer" },
+				ensure_installed = { "lua_ls", "pyright", "rust_analyzer", "intelephense" },
 			})
 		end,
 	},
@@ -41,6 +44,11 @@ return {
 						},
 					},
 				},
+			})
+
+			lspconfig.intelephense.setup({
+				capabilities = capabilities,
+				filetypes = { "php" },
 			})
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
