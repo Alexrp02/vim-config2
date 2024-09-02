@@ -29,7 +29,7 @@ end, { silent = true })
 -- vim.keymap.set("n", "<leader>qq", ":wqall!<CR>")
 vim.keymap.set("n", "<leader>qq", function()
 	vim.cmd("Neotree close")
-	vim.cmd("wqa")
+	vim.cmd("q")
 end)
 
 -- Navigation
