@@ -7,6 +7,7 @@ return {
 		local builtin = require("telescope.builtin")
 		vim.keymap.set("n", "<leader><leader>", builtin.find_files, {desc="Search files with telescope"})
 		vim.keymap.set("n", "<leader>sg", builtin.live_grep, {desc="Search with grep on folder"})
+		vim.keymap.set("n", "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<cr>", {desc="Grep search current buffer"})
 	end
 	},
 	{
