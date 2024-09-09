@@ -5,6 +5,20 @@ return {
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
 			local builtin = require("telescope.builtin")
+			local open_with_trouble = function(...)
+				return require("trouble.sources.telescope").open(...)
+			end
+
+			local telescope = require("telescope")
+
+			telescope.setup({
+				defaults = {
+					mappings = {
+						i = { ["<c-t>"] = open_with_trouble },
+						n = { ["<c-t>"] = open_with_trouble },
+					},
+				},
+			})
 			vim.keymap.set("n", "<leader><leader>", builtin.find_files, { desc = "Search files with telescope" })
 			vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search with grep on folder" })
 			vim.keymap.set(
@@ -30,22 +44,10 @@ return {
 	},
 	{
 		"folke/trouble.nvim",
-		opts = {}, -- for default options, refer to the configuration section for custom setup.
+		opts = {
+			max_items = 2000,
+		}, -- for default options, refer to the configuration section for custom setup.
 		cmd = "Trouble",
-		config = function()
-			local open_with_trouble = require("trouble.sources.telescope").open
-
-			local telescope = require("telescope")
-
-			telescope.setup({
-				defaults = {
-					mappings = {
-						i = { ["<c-t>"] = open_with_trouble },
-						n = { ["<c-t>"] = open_with_trouble },
-					},
-				},
-			})
-		end,
 		keys = {
 			{
 				"<leader>xx",
