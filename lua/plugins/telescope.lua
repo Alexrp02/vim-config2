@@ -2,7 +2,15 @@ return {
 	{
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.8",
-		dependencies = { "nvim-lua/plenary.nvim" },
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			{
+				"nvim-telescope/telescope-live-grep-args.nvim",
+				-- This will not install any breaking changes.
+				-- For major updates, this must be adjusted manually.
+				version = "^1.0.0",
+			},
+		},
 		config = function()
 			local builtin = require("telescope.builtin")
 			local open_with_trouble = function(...)
@@ -20,13 +28,20 @@ return {
 				},
 			})
 			vim.keymap.set("n", "<leader><leader>", builtin.find_files, { desc = "Search files with telescope" })
-			vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search with grep on folder" })
+			vim.keymap.set("n", "<leader>sgg", builtin.live_grep, { desc = "Search with grep on folder" })
 			vim.keymap.set(
 				"n",
 				"<leader>sb",
 				"<cmd>Telescope current_buffer_fuzzy_find<cr>",
 				{ desc = "Grep search current buffer" }
 			)
+			vim.keymap.set(
+				"n",
+				"<leader>sga",
+				":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
+				{ desc = "Live grep with arguments" }
+			)
+			telescope.load_extension("live_grep_args")
 		end,
 	},
 	{
