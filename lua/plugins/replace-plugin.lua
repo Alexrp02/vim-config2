@@ -13,6 +13,7 @@ return {
 						transient = true,
 						prefills = {
 							filesFilter = ext and ext ~= "" and "*." .. ext or nil,
+							paths = vim.fn.expand("%"),
 						},
 					})
 				end,
