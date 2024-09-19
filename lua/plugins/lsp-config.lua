@@ -12,7 +12,14 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "pyright", "rust_analyzer", "intelephense" },
+				ensure_installed = {
+					"lua_ls",
+					"pyright",
+					"rust_analyzer",
+					"intelephense",
+					"docker_compose_language_service",
+					"dockerls",
+				},
 			})
 		end,
 	},
@@ -52,7 +59,16 @@ return {
 			})
 			lspconfig.jsonls.setup({
 				capabilities = capabilities,
-				filetypes = { "json" }
+				filetypes = { "json" },
+			})
+
+			lspconfig.docker_compose_language_service.setup({
+				capabilities = capabilities,
+				filetypes = { "yaml" },
+			})
+
+			lspconfig.dockerls.setup({
+				capabilities = capabilities,
 			})
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
