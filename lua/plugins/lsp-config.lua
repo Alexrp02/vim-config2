@@ -19,6 +19,7 @@ return {
 					"intelephense",
 					"docker_compose_language_service",
 					"dockerls",
+					"bashls",
 				},
 			})
 		end,
@@ -65,6 +66,11 @@ return {
 			lspconfig.docker_compose_language_service.setup({
 				capabilities = capabilities,
 				filetypes = { "yaml" },
+			})
+
+			lspconfig.bashls.setup({
+				capabilities = capabilities,
+				filetypes = { "sh" },
 			})
 
 			lspconfig.dockerls.setup({

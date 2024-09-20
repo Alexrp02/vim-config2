@@ -41,6 +41,7 @@ return {
 				":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
 				{ desc = "Live grep with arguments" }
 			)
+			vim.keymap.set("n", "<leader>bb", ":Telescope buffers<CR>", {desc = "Buffers list"})
 			telescope.load_extension("live_grep_args")
 		end,
 	},
