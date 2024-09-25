@@ -37,3 +37,14 @@ vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+-- Recognize Dockerfile filetypes
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile", "VimEnter"}, {
+    pattern = {"[Dd]ockerfile", "[Dd]ockerfile*", "*.[Dd]ockerfile", "*.dock"},
+    command = "setfiletype Dockerfile"
+})
+
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile", "VimEnter"}, {
+    pattern = "[Dd]ockerfile.vim",
+    command = "setfiletype vim"
+})
