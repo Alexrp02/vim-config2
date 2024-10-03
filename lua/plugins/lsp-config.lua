@@ -6,7 +6,7 @@ return {
 		end,
 	},
 	{
-		"nvim-treesitter-context",
+		"nvim-treesitter/nvim-treesitter-context",
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -65,7 +65,7 @@ return {
 
 			lspconfig.docker_compose_language_service.setup({
 				capabilities = capabilities,
-				filetypes = { "yaml" },
+				filetypes = { "docker_compose.yaml.yml" },
 			})
 
 			lspconfig.bashls.setup({

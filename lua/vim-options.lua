@@ -48,3 +48,8 @@ vim.api.nvim_create_autocmd({"BufRead", "BufNewFile", "VimEnter"}, {
     pattern = "[Dd]ockerfile.vim",
     command = "setfiletype vim"
 })
+
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile", "VimEnter"}, {
+    pattern = {"*[Dd]ocker-compose*"},
+    command = "setfiletype docker_compose.yaml.yml"
+})
