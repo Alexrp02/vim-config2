@@ -1,25 +1,33 @@
 return {
 	{
-		"folke/persistence.nvim",
-		event = "BufReadPre",
-		opts = {},
-		-- stylua: ignore
-		keys = {
-			{ "<leader>qs", function() require("persistence").load() end,                desc = "Restore Session" },
-			{ "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
-			{ "<leader>qd", function() require("persistence").stop() end,                desc = "Don't Save Current Session" },
-		},
-	},
-	{
-		"rmagatti/auto-session",
+		"olimorris/persisted.nvim",
 		lazy = false,
-
-		---enables autocomplete for opts
-		---@module "auto-session"
-		---@type AutoSession.Config
 		opts = {
-			suppressed_dirs = { "~/", "~/Projects", "~/Downloads", "/" },
-			-- log_level = 'debug',
+			autoload = true,
+			autosave = true,
+			use_git_branch = true,
+		},
+		config = function(_, opts)
+			local persisted = require("persisted")
+			persisted.branch = function()
+				local branch = vim.fn.systemlist("git branch --show-current")[1]
+				return vim.v.shell_error == 0 and branch or nil
+			end
+			persisted.setup(opts)
+		end,
+
+		keys = {
+			{ "<leader>qs", "<cmd>SessionLoad<cr>", desc = "Restore Session" },
+			{
+				"<leader>ql",
+				"<cmd>SessionLoadFast<cr>",
+				desc = "Restore Last Session",
+			},
+			{
+				"<leader>qd",
+				"<cmd>SessionStop<cr>",
+				desc = "Don't Save Current Session",
+			},
 		},
 	},
 }
