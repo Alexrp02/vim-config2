@@ -20,7 +20,7 @@ return {
 					"docker_compose_language_service",
 					"dockerls",
 					"bashls",
-					"tsserver",
+					"ts_ls",
 					"html",
 					"cssls",
 				},
@@ -76,7 +76,7 @@ return {
 				filetypes = { "sh" },
 			})
 
-			lspconfig.tsserver.setup({
+			lspconfig.ts_ls.setup({
 				capabilities = capabilities,
 				filetypes = { "javascript" }
 			})
