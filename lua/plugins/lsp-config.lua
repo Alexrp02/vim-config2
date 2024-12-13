@@ -23,6 +23,7 @@ return {
 					"ts_ls",
 					"html",
 					"cssls",
+					"ruby_lsp",
 				},
 			})
 		end,
@@ -78,17 +79,22 @@ return {
 
 			lspconfig.ts_ls.setup({
 				capabilities = capabilities,
-				filetypes = { "javascript" }
+				filetypes = { "javascript" },
 			})
 
 			lspconfig.html.setup({
 				capabilities = capabilities,
-				filetypes = {"html"}
+				filetypes = { "html" },
 			})
 
 			lspconfig.cssls.setup({
 				capabilities = capabilities,
-				filetypes = {"css"}
+				filetypes = { "css" },
+			})
+
+			lspconfig.ruby_lsp.setup({
+				capabilities = capabilities,
+				filetypes = { "ruby" },
 			})
 
 			lspconfig.dockerls.setup({
@@ -120,7 +126,7 @@ return {
 			require("inc_rename").setup()
 			vim.keymap.set("n", "<leader>cr", function()
 				return ":IncRename " .. vim.fn.expand("<cword>")
-			end, { expr = true , desc = "Rename variable"})
+			end, { expr = true, desc = "Rename variable" })
 		end,
 	},
 }
