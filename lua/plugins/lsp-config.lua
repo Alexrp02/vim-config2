@@ -24,6 +24,7 @@ return {
 					"html",
 					"cssls",
 					"ruby_lsp",
+					"astro",
 				},
 			})
 		end,
@@ -95,6 +96,11 @@ return {
 			lspconfig.ruby_lsp.setup({
 				capabilities = capabilities,
 				filetypes = { "ruby" },
+			})
+
+			lspconfig.astro.setup({
+				capabilities = capabilities,
+				filetypes = { "astro" },
 			})
 
 			lspconfig.dockerls.setup({
