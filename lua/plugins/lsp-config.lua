@@ -20,7 +20,6 @@ return {
 					"docker_compose_language_service",
 					"dockerls",
 					"bashls",
-					"ts_ls",
 					"html",
 					"cssls",
 					"ruby_lsp",
@@ -85,7 +84,7 @@ return {
 
 			lspconfig.html.setup({
 				capabilities = capabilities,
-				filetypes = { "html" },
+				filetypes = { "html", "astro" },
 			})
 
 			lspconfig.cssls.setup({
@@ -134,5 +133,11 @@ return {
 				return ":IncRename " .. vim.fn.expand("<cword>")
 			end, { expr = true, desc = "Rename variable" })
 		end,
+	},
+	{
+		"WieeRd/auto-lsp.nvim",
+		dependencies = { "neovim/nvim-lspconfig" },
+		event = "VeryLazy",
+		opts = {},
 	},
 }
