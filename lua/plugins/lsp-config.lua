@@ -26,6 +26,14 @@ return {
 					"astro",
 				},
 			})
+			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			require("mason-lspconfig").setup_handlers({
+				function(server_name) -- default handler (optional)
+					require("lspconfig")[server_name].setup({
+						capabilities = capabilities,
+					})
+				end,
+			})
 		end,
 	},
 	{
@@ -34,76 +42,24 @@ return {
 		config = function()
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			local lspconfig = require("lspconfig")
-			local util = require("lspconfig/util")
 
-			lspconfig.lua_ls.setup({
-				capabilities = capabilities,
-			})
+			-- lspconfig.docker_compose_language_service.setup({
+			-- 	capabilities = capabilities,
+			-- 	filetypes = { "docker_compose.yaml.yml" },
+			-- })
 
-			lspconfig.pyright.setup({
-				capabilities = capabilities,
-				filetypes = { "python" },
-			})
-
-			lspconfig.rust_analyzer.setup({
-				capabilities = capabilities,
-				filetypes = { "rust" },
-				root_dir = util.root_pattern("Cargo.toml"),
+			-- lspconfig.html.setup({
+			-- 	capabilities = capabilities,
+			-- 	filetypes = { "astro" },
+			-- })
+			lspconfig.astro.setup({
 				settings = {
-					["rust-analyzer"] = {
-						cargo = {
-							allFeatures = true,
+					astro = {
+						updateImportsOnFileMove = {
+							enabled = true,
 						},
 					},
 				},
-			})
-
-			lspconfig.intelephense.setup({
-				capabilities = capabilities,
-				filetypes = { "php" },
-			})
-			lspconfig.jsonls.setup({
-				capabilities = capabilities,
-				filetypes = { "json" },
-			})
-
-			lspconfig.docker_compose_language_service.setup({
-				capabilities = capabilities,
-				filetypes = { "docker_compose.yaml.yml" },
-			})
-
-			lspconfig.bashls.setup({
-				capabilities = capabilities,
-				filetypes = { "sh" },
-			})
-
-			lspconfig.ts_ls.setup({
-				capabilities = capabilities,
-				filetypes = { "javascript" },
-			})
-
-			lspconfig.html.setup({
-				capabilities = capabilities,
-				filetypes = { "html", "astro" },
-			})
-
-			lspconfig.cssls.setup({
-				capabilities = capabilities,
-				filetypes = { "css" },
-			})
-
-			lspconfig.ruby_lsp.setup({
-				capabilities = capabilities,
-				filetypes = { "ruby" },
-			})
-
-			lspconfig.astro.setup({
-				capabilities = capabilities,
-				filetypes = { "astro" },
-			})
-
-			lspconfig.dockerls.setup({
-				capabilities = capabilities,
 			})
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
@@ -121,7 +77,7 @@ return {
 		},
 		config = function()
 			require("mason-null-ls").setup({
-				ensure_installed = { "stylua", "black", "isort" },
+				ensure_installed = { "stylua", "black", "isort", "prettier" },
 			})
 		end,
 	},
@@ -134,10 +90,10 @@ return {
 			end, { expr = true, desc = "Rename variable" })
 		end,
 	},
-	{
-		"WieeRd/auto-lsp.nvim",
-		dependencies = { "neovim/nvim-lspconfig" },
-		event = "VeryLazy",
-		opts = {},
-	},
+	-- {
+	-- 	"WieeRd/auto-lsp.nvim",
+	-- 	dependencies = { "neovim/nvim-lspconfig" },
+	-- 	event = "VeryLazy",
+	-- 	opts = {},
+	-- },
 }

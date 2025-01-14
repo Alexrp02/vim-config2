@@ -7,8 +7,9 @@ return {
 				null_ls.builtins.formatting.stylua,
 				null_ls.builtins.formatting.black,
 				null_ls.builtins.formatting.isort,
-			}
+				null_ls.builtins.formatting.prettier,
+			},
 		})
-		vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, {desc = "(C)ode (Format) the buffer"})
-	end
+		vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format, { desc = "(C)ode (Format) the buffer" })
+	end,
 }
