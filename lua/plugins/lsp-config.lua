@@ -22,7 +22,6 @@ return {
 					"bashls",
 					"html",
 					"cssls",
-					"ruby_lsp",
 					"astro",
 				},
 			})
