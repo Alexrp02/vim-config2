@@ -39,17 +39,12 @@ vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
 
 -- Recognize Dockerfile filetypes
-vim.api.nvim_create_autocmd({"BufRead", "BufNewFile", "VimEnter"}, {
-    pattern = {"[Dd]ockerfile", "[Dd]ockerfile*", "*.[Dd]ockerfile", "*.dock"},
-    command = "setfiletype Dockerfile"
-})
-
-vim.api.nvim_create_autocmd({"BufRead", "BufNewFile", "VimEnter"}, {
-    pattern = "[Dd]ockerfile.vim",
-    command = "setfiletype vim"
-})
-
-vim.api.nvim_create_autocmd({"BufRead", "BufNewFile", "VimEnter"}, {
-    pattern = {"*[Dd]ocker-compose*"},
-    command = "setfiletype docker_compose.yaml.yml"
+vim.filetype.add({
+    pattern = {
+        ["[Dd]ockerfile.*"] = "dockerfile",
+        ["*.[Dd]ockerfile"] = "dockerfile",
+        ["*.dock"] = "dockerfile",
+        ["[Dd]ockerfile.vim"] = "vim",
+        ["*[Dd]ocker-compose*"] = "docker-compose.yaml.yml"
+    }
 })
