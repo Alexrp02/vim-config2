@@ -18,6 +18,17 @@ return {
 			scroll = { enabled = false },
 			statuscolumn = { enabled = true },
 			words = { enabled = true },
+			terminal = {},
+		},
+		keys = {
+			{
+				"<leader>ot",
+				function()
+					require("snacks").terminal.open()
+				end,
+				desc = "Open new terminal",
+				mode = { "n" },
+			},
 		},
 	},
 }
