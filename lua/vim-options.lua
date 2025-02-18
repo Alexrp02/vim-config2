@@ -40,11 +40,32 @@ vim.keymap.set("n", "<C-l>", "<C-w>l")
 
 -- Recognize Dockerfile filetypes
 vim.filetype.add({
-    pattern = {
-        ["[Dd]ockerfile.*"] = "dockerfile",
-        ["*.[Dd]ockerfile"] = "dockerfile",
-        ["*.dock"] = "dockerfile",
-        ["[Dd]ockerfile.vim"] = "vim",
-        ["*[Dd]ocker-compose*"] = "docker-compose.yaml.yml"
-    }
+	pattern = {
+		["[Dd]ockerfile.*"] = "dockerfile",
+		["*.[Dd]ockerfile"] = "dockerfile",
+		["*.dock"] = "dockerfile",
+		["[Dd]ockerfile.vim"] = "vim",
+		["*[Dd]ocker-compose*"] = "docker-compose.yaml.yml",
+	},
 })
+
+vim.keymap.set("n", "<leader>ccq", function()
+	local input = vim.fn.input("Quick Chat: ")
+	if input ~= "" then
+		require("CopilotChat").ask(input, {
+			selection = require("CopilotChat.select").buffer,
+		})
+	end
+end, { desc = "CopilotChat - Quick chat" })
+
+vim.keymap.set("n", "<leader>ccp", function()
+	local actions = require("CopilotChat.actions")
+	require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
+end, { desc = "CopilotChat - Prompt actions" })
+
+vim.keymap.set("n", "<leader>cco", function()
+	require("CopilotChat").open({
+		selection = require("CopilotChat.select").buffer,
+		context = { 'buffers', 'files' }
+	}) 
+end, { desc = "Open chat for this buffer" })
