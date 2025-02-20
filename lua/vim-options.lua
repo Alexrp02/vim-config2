@@ -66,6 +66,14 @@ end, { desc = "CopilotChat - Prompt actions" })
 vim.keymap.set("n", "<leader>cco", function()
 	require("CopilotChat").open({
 		selection = require("CopilotChat.select").buffer,
-		context = { 'buffers', 'files' }
-	}) 
+		context = { "buffers", "files" },
+	})
 end, { desc = "Open chat for this buffer" })
+
+vim.keymap.set("n", "<leader>ccc", function()
+	require("CopilotChat").open()
+end, { desc = "Close chat" })
+
+vim.keymap.set("n", "<leader>ccm", function()
+	vim.cmd("CopilotChatModels")
+end)
