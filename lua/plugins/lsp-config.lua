@@ -39,6 +39,10 @@ return {
 									language = "es",
 								},
 							},
+				end
+					if server_name ~= "ts_ls" then
+						require("lspconfig")[server_name].setup({
+							capabilities = capabilities,
 						})
 					end
 				end,
@@ -74,7 +78,7 @@ return {
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
 			vim.keymap.set("n", "gD", vim.lsp.buf.declaration, {})
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
-			vim.keymap.set("n", "gr", function ()
+			vim.keymap.set("n", "gr", function()
 				vim.cmd("Trouble lsp_references")
 			end, {})
 		end,
