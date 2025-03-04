@@ -24,7 +24,7 @@ return {
 			{
 				"<leader>ot",
 				function()
-					require("snacks").terminal.open()
+					require("snacks").terminal.toggle()
 				end,
 				desc = "Open new terminal",
 				mode = { "n" },
