@@ -31,6 +31,16 @@ return {
 					require("lspconfig")[server_name].setup({
 						capabilities = capabilities,
 					})
+					if server_name == "ltex" then
+						require("lspconfig").ltex.setup({
+							capabilities = capabilities,
+							settings = {
+								ltex = {
+									language = "es",
+								},
+							},
+						})
+					end
 				end,
 			})
 		end,
