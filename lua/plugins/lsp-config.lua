@@ -39,7 +39,8 @@ return {
 									language = "es",
 								},
 							},
-				end
+						})
+					end
 					if server_name ~= "ts_ls" then
 						require("lspconfig")[server_name].setup({
 							capabilities = capabilities,
