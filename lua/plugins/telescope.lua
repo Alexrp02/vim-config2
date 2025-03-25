@@ -10,6 +10,7 @@ return {
 				-- For major updates, this must be adjusted manually.
 				version = "^1.0.0",
 			},
+			"nvim-telescope/telescope-fzf-native.nvim",
 		},
 		config = function()
 			local builtin = require("telescope.builtin")
@@ -97,5 +98,20 @@ return {
 				desc = "Quickfix List (Trouble)",
 			},
 		},
+	},
+	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+	{
+		"ibhagwan/fzf-lua",
+		-- or if using mini.icons/mini.nvim
+		dependencies = { "echasnovski/mini.icons" },
+		opts = {},
+		config = function()
+			vim.keymap.set("n", "<leader>ff", function()
+				require("fzf-lua").files()
+			end, { desc = "Fuzzy find files" })
+			vim.keymap.set("n", "<leader>fg", function()
+				require("fzf-lua").live_grep()
+			end, { desc = "Fuzzy grep" })
+		end,
 	},
 }
