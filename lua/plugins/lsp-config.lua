@@ -29,6 +29,11 @@ return {
 			local on_attach = require("mason-lspconfig").on_attach
 			require("mason-lspconfig").setup_handlers({
 				function(server_name) -- default handler (optional)
+					if server_name ~= "ts_ls" then
+						require("lspconfig")[server_name].setup({
+							capabilities = capabilities,
+						})
+					end
 					if server_name == "ltex" then
 						require("lspconfig").ltex.setup({
 							capabilities = capabilities,
@@ -44,14 +49,6 @@ return {
 									diagnosticSeverity = "information",
 								},
 							},
-						})
-					end
-					require("lspconfig")[server_name].setup({
-						capabilities = capabilities,
-					})
-					if server_name ~= "ts_ls" then
-						require("lspconfig")[server_name].setup({
-							capabilities = capabilities,
 						})
 					end
 				end,
