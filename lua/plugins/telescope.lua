@@ -44,6 +44,13 @@ return {
 			)
 			vim.keymap.set("n", "<leader>bb", ":Telescope buffers<CR>", { desc = "Buffers list" })
 			vim.keymap.set("n", "<leader>ss", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Buffer symbols" })
+			-- Spell suggestions keymap
+			vim.keymap.set(
+				"n",
+				"<leader>fs",
+				require("telescope.builtin").spell_suggest,
+				{ desc = "Spell suggestions" }
+			)
 			telescope.load_extension("live_grep_args")
 		end,
 	},
