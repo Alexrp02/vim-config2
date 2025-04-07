@@ -1,5 +1,11 @@
 vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
+vim.g.maplocalleader = ","
+
+
+vim.opt.wrap = true
+vim.opt.linebreak = true
+
+
 vim.o.number = true
 vim.o.relativenumber = true
 
