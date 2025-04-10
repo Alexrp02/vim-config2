@@ -12,6 +12,14 @@ return {
 		end,
 	},
 	{
+		"nvim-treesitter/nvim-treesitter-context",
+		config = function()
+			vim.keymap.set("n", "gp", function()
+				require("treesitter-context").go_to_context()
+			end, { desc = "Jump to Treesitter context" })
+		end,
+	},
+	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		config = function()

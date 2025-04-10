@@ -6,9 +6,6 @@ return {
 		end,
 	},
 	{
-		"nvim-treesitter/nvim-treesitter-context",
-	},
-	{
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
