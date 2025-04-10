@@ -44,6 +44,37 @@ vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
 
+-- Indentation jumping
+-- Helper to get indent level of a line
+local function get_indent(lnum)
+  return vim.fn.indent(lnum)
+end
+
+-- Jump to previous line with less indent
+vim.keymap.set("n", "[i", function()
+  local cur = vim.fn.line(".")
+  local cur_indent = get_indent(cur)
+  for lnum = cur - 1, 1, -1 do
+    if get_indent(lnum) < cur_indent then
+      vim.api.nvim_win_set_cursor(0, { lnum, 0 })
+      return
+    end
+  end
+end, { desc = "Jump to previous line with less indent" })
+
+-- Jump to next line with less indent
+vim.keymap.set("n", "]i", function()
+  local cur = vim.fn.line(".")
+  local max = vim.fn.line("$")
+  local cur_indent = get_indent(cur)
+  for lnum = cur + 1, max do
+    if get_indent(lnum) < cur_indent then
+      vim.api.nvim_win_set_cursor(0, { lnum, 0 })
+      return
+    end
+  end
+end, { desc = "Jump to next line with less indent" })
+
 -- Recognize Dockerfile filetypes
 vim.filetype.add({
 	pattern = {
