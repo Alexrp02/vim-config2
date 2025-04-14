@@ -69,9 +69,11 @@ return {
 					type = "pwa-chrome",
 					request = "launch",
 					name = "Launch Chrome",
-					url = "http://localhost:3000",
+					url = "http://localhost:8000",
 					sourceMaps = true,
 					webRoot = vim.fn.getcwd(),
+					runtimeExecutable = "/usr/bin/google-chrome",
+					runtimeArgs = { "--disable-gpu", "--remote-debugging-port=9222", "--no-sandbox" },
 				})
 			end
 		end,
