@@ -52,12 +52,25 @@ return {
 						command = "node",
 						args = {
 							require("mason-registry").get_package("js-debug-adapter"):get_install_path()
-								.. "/js-debug/src/dapDebugServer.js",
+							.. "/js-debug/src/dapDebugServer.js",
 							"${port}",
 						},
 					},
 				}
 			end
+			dap.adapters["pwa-node"] = {
+				type = "server",
+				host = "localhost",
+				port = "${port}",
+				executable = {
+					command = "node",
+					args = {
+						require("mason-registry").get_package("js-debug-adapter"):get_install_path()
+						.. "/js-debug/src/dapDebugServer.js",
+						"${port}",
+					},
+				},
+			}
 			for _, lang in ipairs({
 				"typescript",
 				"javascript",
@@ -74,6 +87,16 @@ return {
 					webRoot = vim.fn.getcwd(),
 					runtimeExecutable = "/usr/bin/google-chrome",
 					runtimeArgs = { "--disable-gpu", "--remote-debugging-port=9222", "--no-sandbox" },
+				})
+				table.insert(dap.configurations[lang], {
+					type = "pwa-node",
+					request = "attach",
+					name = "Attach to node process",
+					processId = require("dap.utils").pick_process,
+					cwd = "${workspaceFolder}",
+					sourceMaps = true,
+					program = "${workspaceFolder}/dist/apps/backend/main.js",
+					outFiles = {"${workspaceFolder}/dist/**/*.js"}
 				})
 			end
 		end,
