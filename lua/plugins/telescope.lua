@@ -113,6 +113,15 @@ return {
 		dependencies = { "echasnovski/mini.icons" },
 		opts = {},
 		config = function()
+			require("fzf-lua").setup({
+				keymap = {
+					fzf = {
+						true,
+						["ctrl-q"] = "select-all+accept"
+					}
+				}
+			})
+
 			vim.keymap.set("n", "<leader>ff", function()
 				require("fzf-lua").files()
 			end, { desc = "Fuzzy find files" })
