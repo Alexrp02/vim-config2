@@ -2,7 +2,21 @@ return {
 	{
 		"mfussenegger/nvim-dap",
 		dependencies = {
-			"mxsdev/nvim-dap-vscode-js",
+			{
+				"mxsdev/nvim-dap-vscode-js",
+				config = function ()
+					require("dap-vscode-js").setup({
+						debugger_path = vim.fn.resolve(vim.fn.stdpath("data") .. "/lazy/vscode-js-debug"),
+					})
+				end,
+				adapters = {
+					"chrome",
+					"pwa-chrome",
+					-- "pwa-node",
+					"node",
+					"node-terminal"
+				}
+			},
 			-- build debugger from source
 			{
 				"microsoft/vscode-js-debug",
@@ -37,35 +51,52 @@ return {
 				dap.repl.open()
 			end)
 
-			dap.adapters.firefox = {
+			-- dap.adapters.firefox = {
+			-- 	type = "executable",
+			-- 	command = "node",
+			-- 	args = { os.getenv("HOME") .. "/DAPS/vscode-firefox-debug/dist/adapter.bundle.js" },
+			-- }
+			--
+			-- if not dap.adapters["pwa-chrome"] then
+			-- 	dap.adapters["pwa-chrome"] = {
+			-- 		type = "server",
+			-- 		host = "localhost",
+			-- 		port = "${port}",
+			-- 		executable = {
+			-- 			command = "node",
+			-- 			args = {
+			-- 				vim.fn.exepath("js-debug-adapter"),
+			-- 				"${port}",
+			-- 			},
+			-- 		},
+			-- 	}
+			-- end
+			-- dap.adapters["pwa-node"] = {
+			-- 	type = "server",
+			-- 	host = "localhost",
+			-- 	port = "${port}",
+			-- 	executable = {
+			-- 		command = "node",
+			-- 		args = {
+			-- 			vim.fn.exepath("js-debug-adapter"),
+			-- 			"${port}",
+			-- 		},
+			-- 	},
+			-- }
+			dap.adapters.node = {
 				type = "executable",
 				command = "node",
-				args = { os.getenv("HOME") .. "/DAPS/vscode-firefox-debug/dist/adapter.bundle.js" },
+				args = { vim.fn.stdpath("data") .. "/mason/packages/node-debug2-adapter/out/src/nodeDebug.js" },
 			}
-
-			if not dap.adapters["pwa-chrome"] then
-				dap.adapters["pwa-chrome"] = {
-					type = "server",
-					host = "localhost",
-					port = "${port}",
-					executable = {
-						command = "node",
-						args = {
-							vim.fn.exepath("js-debug-adapter"),
-							"${port}",
-						},
-					},
-				}
-			end
-			dap.adapters["pwa-node"] = {
-				type = "server",
-				host = "localhost",
-				port = "${port}",
+			dap.adapters['pwa-node'] = {
+				type = 'server',
+				host = 'localhost',
+				port = '${port}',
 				executable = {
-					command = "node",
+					command = 'node',
 					args = {
-						vim.fn.exepath("js-debug-adapter"),
-						"${port}",
+						vim.fn.stdpath("data") .. '/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js',
+						'${port}',
 					},
 				},
 			}
@@ -94,7 +125,34 @@ return {
 					cwd = "${workspaceFolder}",
 					sourceMaps = true,
 					program = "${workspaceFolder}/dist/apps/backend/main.js",
-					outFiles = {"${workspaceFolder}/dist/**/*.js"}
+					outFiles = { "${workspaceFolder}/dist/**/*.js" },
+				})
+				table.insert(dap.configurations[lang], {
+					type = "pwa-node",
+					request = "attach",
+					name = "Auto Attach to node process",
+					cwd = vim.fn.getcwd()
+				})
+				table.insert(dap.configurations[lang], {
+					type = "pwa-node",
+					request = "launch",
+					name = "Debug nest",
+					runtimeExecutable = "yarn",
+					runtimeArgs = {
+						"run",
+						"start:debug",
+						"--",
+						"--inspect-brk",
+					},
+					autoAttachChildProcesses = true,
+					restart = true,
+					sourceMaps = true,
+					stopOnEntry = false,
+					console = "integratedTerminal",
+					cwd = "${workspaceFolder}",
+					env = {
+						NODE_TLS_REJECT_UNAUTHORIZED = "0",
+					}
 				})
 			end
 		end,
