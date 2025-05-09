@@ -137,13 +137,19 @@ return {
 					type = "pwa-node",
 					request = "launch",
 					name = "Debug nest",
-					runtimeExecutable = "yarn",
-					runtimeArgs = {
-						"run",
-						"start:debug",
-						"--",
-						"--inspect-brk",
-					},
+					runtimeExecutable = function()
+						local package_manager = vim.fn.input("Package manager (npm/yarn/npx): ", "npm")
+						return package_manager
+					end,
+					runtimeArgs = function()
+						return vim.split(vim.fn.input("Enter command arguments (e.g. run start:debug): "), " ")
+					end,
+					-- runtimeArgs = {
+					-- 	"run",
+					-- 	"start:debug",
+					-- 	"--",
+					-- 	"--inspect-brk",
+					-- },
 					autoAttachChildProcesses = true,
 					restart = true,
 					sourceMaps = true,

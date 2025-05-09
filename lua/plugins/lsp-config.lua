@@ -22,34 +22,7 @@ return {
 					"astro",
 				},
 			})
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			local on_attach = require("mason-lspconfig").on_attach
-			-- require("mason-lspconfig").setup_handlers({
-			-- 	function(server_name) -- default handler (optional)
-			-- 		if server_name ~= "ts_ls" then
-			-- 			require("lspconfig")[server_name].setup({
-			-- 				capabilities = capabilities,
-			-- 			})
-			-- 		end
-			-- 		if server_name == "ltex" then
-			-- 			require("lspconfig").ltex.setup({
-			-- 				capabilities = capabilities,
-			-- 				on_attach = on_attach,
-			-- 				settings = {
-			-- 					ltex = {
-			-- 						language = "es-ES", -- Set Spanish as the primary language
-			-- 						additionalRules = {
-			-- 							languageModel = {}, -- Optional: path to language model
-			-- 						},
-			-- 						disabledRules = {},
-			-- 						enabled = true,
-			-- 						diagnosticSeverity = "information",
-			-- 					},
-			-- 				},
-			-- 			})
-			-- 		end
-			-- 	end,
-			-- })
+			vim.lsp.enable("ts_ls", false)
 		end,
 	},
 	{
