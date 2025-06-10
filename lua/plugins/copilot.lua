@@ -2,23 +2,35 @@ return {
 	{
 		"github/copilot.vim",
 		config = function()
-			vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-			  expr = true,
-			  replace_keycodes = false
+			vim.keymap.set("i", "<C-J>", 'copilot#Accept("\\<CR>")', {
+				expr = true,
+				replace_keycodes = false,
 			})
 			vim.g.copilot_no_tab_map = true
 		end,
 	},
 	{
-		"CopilotC-Nvim/CopilotChat.nvim",
+		"olimorris/codecompanion.nvim",
+		opts = {},
 		dependencies = {
-			{ "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
-			{ "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			{
+				"MeanderingProgrammer/render-markdown.nvim",
+				ft = { "markdown", "codecompanion" },
+			},
+			{
+				"HakonHarnes/img-clip.nvim",
+				opts = {
+					filetypes = {
+						codecompanion = {
+							prompt_for_file_name = false,
+							template = "[Image]($FILE_PATH)",
+							use_absolute_path = true,
+						},
+					},
+				},
+			},
 		},
-		build = "make tiktoken", -- Only on MacOS or Linux
-		opts = {
-			-- See Configuration section for options
-		},
-		-- See Commands section for default commands if you want to lazy load on them
 	},
 }
