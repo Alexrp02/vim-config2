@@ -126,6 +126,11 @@ return {
 					sourceMaps = true,
 					program = "${workspaceFolder}/dist/apps/backend/main.js",
 					outFiles = { "${workspaceFolder}/dist/**/*.js" },
+					autoAttachChildProcesses = true,
+					restart = true,
+					autoReload = {
+						enable = true
+					}
 				})
 				table.insert(dap.configurations[lang], {
 					type = "pwa-node",
@@ -142,7 +147,7 @@ return {
 						return package_manager
 					end,
 					runtimeArgs = function()
-						return vim.split(vim.fn.input("Enter command arguments (e.g. run start:debug): "), " ")
+						return vim.split(vim.fn.input("Enter command arguments (e.g. run start:debug): ", "run start:debug"), " ")
 					end,
 					-- runtimeArgs = {
 					-- 	"run",
@@ -156,6 +161,9 @@ return {
 					stopOnEntry = false,
 					console = "integratedTerminal",
 					cwd = "${workspaceFolder}",
+					autoReload = {
+						enable = true,
+					},
 					env = {
 						NODE_TLS_REJECT_UNAUTHORIZED = "0",
 					}
@@ -188,9 +196,9 @@ return {
 			dap.listeners.before.event_terminated.dapui_config = function()
 				dapui.close()
 			end
-			dap.listeners.before.event_exited.dapui_config = function()
-				dapui.close()
-			end
+			-- dap.listeners.before.event_exited.dapui_config = function()
+			-- 	dapui.close()
+			-- end
 		end,
 	},
 }
