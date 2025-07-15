@@ -19,6 +19,7 @@ return {
 			-- statuscolumn = { enabled = true },
 			words = { enabled = true },
 			terminal = {},
+			image = {},
 		},
 		keys = {
 			{
