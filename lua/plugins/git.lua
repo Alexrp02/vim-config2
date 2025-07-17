@@ -29,4 +29,7 @@ return {
 			vim.keymap.set("n", "<leader>ghs", function () gs.stage_hunk() end, {desc = "Git stage hunk"})
 		end,
 	},
+	{
+		"tpope/vim-fugitive"
+	}
 }
