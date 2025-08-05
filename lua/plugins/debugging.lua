@@ -4,7 +4,7 @@ return {
 		dependencies = {
 			{
 				"mxsdev/nvim-dap-vscode-js",
-				config = function ()
+				config = function()
 					require("dap-vscode-js").setup({
 						debugger_path = vim.fn.resolve(vim.fn.stdpath("data") .. "/lazy/vscode-js-debug"),
 					})
@@ -14,8 +14,8 @@ return {
 					"pwa-chrome",
 					-- "pwa-node",
 					"node",
-					"node-terminal"
-				}
+					"node-terminal",
+				},
 			},
 			-- build debugger from source
 			{
@@ -88,15 +88,15 @@ return {
 				command = "node",
 				args = { vim.fn.stdpath("data") .. "/mason/packages/node-debug2-adapter/out/src/nodeDebug.js" },
 			}
-			dap.adapters['pwa-node'] = {
-				type = 'server',
-				host = 'localhost',
-				port = '${port}',
+			dap.adapters["pwa-node"] = {
+				type = "server",
+				host = "localhost",
+				port = "${port}",
 				executable = {
-					command = 'node',
+					command = "node",
 					args = {
-						vim.fn.stdpath("data") .. '/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js',
-						'${port}',
+						vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js",
+						"${port}",
 					},
 				},
 			}
@@ -129,14 +129,14 @@ return {
 					autoAttachChildProcesses = true,
 					restart = true,
 					autoReload = {
-						enable = true
-					}
+						enable = true,
+					},
 				})
 				table.insert(dap.configurations[lang], {
 					type = "pwa-node",
 					request = "attach",
 					name = "Auto Attach to node process",
-					cwd = vim.fn.getcwd()
+					cwd = vim.fn.getcwd(),
 				})
 				table.insert(dap.configurations[lang], {
 					type = "pwa-node",
@@ -147,7 +147,10 @@ return {
 						return package_manager
 					end,
 					runtimeArgs = function()
-						return vim.split(vim.fn.input("Enter command arguments (e.g. run start:debug): ", "run start:debug"), " ")
+						return vim.split(
+							vim.fn.input("Enter command arguments (e.g. run start:debug): ", "run start:debug"),
+							" "
+						)
 					end,
 					-- runtimeArgs = {
 					-- 	"run",
@@ -166,9 +169,34 @@ return {
 					},
 					env = {
 						NODE_TLS_REJECT_UNAUTHORIZED = "0",
-					}
+					},
 				})
 			end
+			-- RUST DEBUGGING
+			dap.adapters.codelldb = {
+				type = "server",
+				port = "${port}",
+				executable = {
+					command = vim.fn.stdpath("data") .. "/mason/packages/codelldb/extension/adapter/codelldb",
+					args = {
+						"--port",
+						"${port}",
+					},
+				},
+			}
+
+			dap.configurations.rust = {
+				{
+					name = "Launch file",
+					type = "codelldb",
+					request = "launch",
+					program = function()
+						return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+					end,
+					cwd = "${workspaceFolder}",
+					stopOnEntry = false,
+				},
+			}
 		end,
 	},
 	{

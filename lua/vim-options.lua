@@ -14,8 +14,8 @@ vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diag
 vim.keymap.set("n", "<leader>sd", "<cmd>Telescope diagnostics bufnr=0<cr>", { desc = "Document Diagnostics" })
 
 -- Use tabs but no so long to indent
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.expandtab = false
 
 -- windows
