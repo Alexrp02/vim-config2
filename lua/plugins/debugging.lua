@@ -29,23 +29,23 @@ return {
 			vim.keymap.set("n", "<leader>dc", function()
 				dap.continue()
 			end)
-			vim.keymap.set("n", "<F10>", function()
+			vim.keymap.set("n", "<leader>dl", function()
 				dap.step_over()
 			end)
-			vim.keymap.set("n", "<F11>", function()
+			vim.keymap.set("n", "<leader>di", function()
 				dap.step_into()
 			end)
-			vim.keymap.set("n", "<F12>", function()
+			vim.keymap.set("n", "<leader>do", function()
 				dap.step_out()
 			end)
 			vim.keymap.set("n", "<Leader>dt", function()
 				dap.toggle_breakpoint()
 			end)
+			vim.keymap.set("n", "<Leader>dT", function()
+				dap.toggle_breakpoint(vim.fn.input("Breakpoint condition: "))
+			end)
 			vim.keymap.set("n", "<Leader>db", function()
 				dap.set_breakpoint()
-			end)
-			vim.keymap.set("n", "<Leader>dl", function()
-				dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
 			end)
 			vim.keymap.set("n", "<Leader>dr", function()
 				dap.repl.open()
@@ -227,6 +227,27 @@ return {
 			-- dap.listeners.before.event_exited.dapui_config = function()
 			-- 	dapui.close()
 			-- end
+			-- KEYMAPS
+
+			vim.keymap.set("n", "<leader>du", function()
+				dapui.toggle()
+			end)
 		end,
 	},
+	{
+		"theHamsta/nvim-dap-virtual-text",
+		dependencies = {
+			"mfussenegger/nvim-dap",
+		},
+		config = function()
+			require("nvim-dap-virtual-text").setup({
+				enabled = true,
+				highlight_changed_variables = true,
+				highlight_new_as_changed = true,
+				show_stop_reason = true,
+				commented = false,
+				all_references = true,
+			})
+		end,
+	}
 }
