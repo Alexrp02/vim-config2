@@ -135,6 +135,26 @@ return {
 				table.insert(dap.configurations[lang], {
 					type = "pwa-node",
 					request = "attach",
+					name = "Attach to Node.js (port)",
+					address = "localhost", -- or the container's IP if not mapped to localhost
+					port = function()
+						return vim.fn.input("Port: ", "9229")
+					end,
+					restart = true,
+					sourceMaps = true,
+					cwd = vim.fn.getcwd(),
+					localRoot = vim.fn.getcwd(),
+					remoteRoot = function()
+						return vim.fn.input("Remote root: ", "/usr/src/app")
+					end,
+					protocol = "inspector",
+					autoAttachChildProcesses = true,
+					skipFiles = { "<node_internals>/**" },
+				})
+
+				table.insert(dap.configurations[lang], {
+					type = "pwa-node",
+					request = "attach",
 					name = "Auto Attach to node process",
 					cwd = vim.fn.getcwd(),
 				})
@@ -234,20 +254,4 @@ return {
 			end)
 		end,
 	},
-	{
-		"theHamsta/nvim-dap-virtual-text",
-		dependencies = {
-			"mfussenegger/nvim-dap",
-		},
-		config = function()
-			require("nvim-dap-virtual-text").setup({
-				enabled = true,
-				highlight_changed_variables = true,
-				highlight_new_as_changed = true,
-				show_stop_reason = true,
-				commented = false,
-				all_references = true,
-			})
-		end,
-	}
 }
