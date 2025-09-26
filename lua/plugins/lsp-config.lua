@@ -30,7 +30,6 @@ return {
 		lazy = false,
 		config = function()
 			-- local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			local lspconfig = require("lspconfig")
 
 			-- lspconfig.docker_compose_language_service.setup({
 			-- 	capabilities = capabilities,
@@ -41,7 +40,7 @@ return {
 			-- 	capabilities = capabilities,
 			-- 	filetypes = { "astro" },
 			-- })
-			lspconfig.astro.setup({
+			vim.lsp.config('astro', {
 				settings = {
 					astro = {
 						updateImportsOnFileMove = {
