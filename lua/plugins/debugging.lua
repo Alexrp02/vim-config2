@@ -28,28 +28,36 @@ return {
 			local dap = require("dap")
 			vim.keymap.set("n", "<leader>dc", function()
 				dap.continue()
-			end)
+			end, { desc = "Continue" }
+			)
 			vim.keymap.set("n", "<leader>dl", function()
 				dap.step_over()
-			end)
+			end, { desc = "Step Over" }
+			)
 			vim.keymap.set("n", "<leader>di", function()
 				dap.step_into()
-			end)
+			end, { desc = "Step Into" }
+			)
 			vim.keymap.set("n", "<leader>do", function()
 				dap.step_out()
-			end)
+			end, { desc = "Step Out" }
+			)
 			vim.keymap.set("n", "<Leader>dt", function()
 				dap.toggle_breakpoint()
-			end)
+			end, { desc = "Toggle Breakpoint" }
+			)
 			vim.keymap.set("n", "<Leader>dT", function()
 				dap.toggle_breakpoint(vim.fn.input("Breakpoint condition: "))
-			end)
+			end, { desc = "Conditional Breakpoint" }
+			)
 			vim.keymap.set("n", "<Leader>db", function()
 				dap.set_breakpoint()
-			end)
+			end, { desc = "Set Breakpoint" }
+			)
 			vim.keymap.set("n", "<Leader>dr", function()
 				dap.repl.open()
-			end)
+			end, { desc = "Open REPL" }
+			)
 
 			-- dap.adapters.firefox = {
 			-- 	type = "executable",
@@ -251,7 +259,12 @@ return {
 
 			vim.keymap.set("n", "<leader>du", function()
 				dapui.toggle()
-			end)
+			end, { desc = "Toggle Dap UI" }
+			)
+			vim.keymap.set("n", "<Leader>de", function()
+				dapui.eval()
+			end, { desc = "Evaluate expression" }
+			)
 		end,
 	},
 }
