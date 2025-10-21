@@ -18,6 +18,9 @@ return {
 			vim.keymap.set("n", "gp", function()
 				require("treesitter-context").go_to_context()
 			end, { desc = "Jump to Treesitter context" })
+			vim.keymap.set("n", "<leader>tc", function()
+				require("treesitter-context").toggle()
+			end, { desc = "Toggle Treesitter context" })
 		end,
 	},
 	{
