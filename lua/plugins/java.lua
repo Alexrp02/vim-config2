@@ -1,6 +1,9 @@
 return {
 	{
 		"mfussenegger/nvim-jdtls",
+		dependencies = {
+			"mfussenegger/nvim-dap"
+		},
 		ft = { "java" }, -- load only for Java files
 		config = function()
 			-- Only run when a Java buffer is opened
@@ -54,9 +57,18 @@ return {
 						workspace_dir,
 					}
 
+					local java_debug_path = vim.fn.stdpath("data")
+						.. "/mason/packages/java-debug-adapter/extension/server/"
+					local java_debug_bundle = vim.fn.glob(java_debug_path .. "com.microsoft.java.debug.plugin-*.jar")
+
 					local config = {
 						cmd = cmd,
 						root_dir = root_dir,
+						init_options = {
+							bundles = {
+								java_debug_bundle,
+							},
+						},
 					}
 
 					-- Start or attach to JDTLS for this buffer
