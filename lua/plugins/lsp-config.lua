@@ -6,26 +6,6 @@ return {
 		end,
 	},
 	{
-		"williamboman/mason-lspconfig.nvim",
-		config = function()
-			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"lua_ls",
-					"pyright",
-					"rust_analyzer",
-					"intelephense",
-					"docker_compose_language_service",
-					"dockerls",
-					"bashls",
-					"html",
-					"cssls",
-					"astro",
-				},
-			})
-			vim.lsp.enable("ts_ls", false)
-		end,
-	},
-	{
 		"neovim/nvim-lspconfig",
 		lazy = false,
 		config = function()
@@ -40,7 +20,7 @@ return {
 			-- 	capabilities = capabilities,
 			-- 	filetypes = { "astro" },
 			-- })
-			vim.lsp.config('astro', {
+			vim.lsp.config("astro", {
 				settings = {
 					astro = {
 						updateImportsOnFileMove = {
