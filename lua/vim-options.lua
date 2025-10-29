@@ -86,31 +86,43 @@ vim.filetype.add({
 	},
 })
 
-vim.keymap.set("n", "<leader>ccq", function()
-	local input = vim.fn.input("Quick Chat: ")
-	if input ~= "" then
-		require("CopilotChat").ask(input, {
-			selection = require("CopilotChat.select").buffer,
-		})
-	end
-end, { desc = "CopilotChat - Quick chat" })
+-- LSP signature help
+vim.keymap.set('i', '<C-h>', 
+	function()
+		vim.lsp.buf.signature_help()
+	end, 
+	{ desc = "LSP Signature Help" })
 
-vim.keymap.set("n", "<leader>ccp", function()
-	local actions = require("CopilotChat.actions")
-	require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
-end, { desc = "CopilotChat - Prompt actions" })
+-- Fold all the same levels of folds under the cursor
+vim.api.nvim_create_user_command("FoldSameLevel", function()
+  local target_level = vim.fn.foldlevel('.')
+  if target_level <= 0 then
+    print("No fold under cursor")
+    return
+  end
 
-vim.keymap.set("n", "<leader>cco", function()
-	require("CopilotChat").open({
-		selection = require("CopilotChat.select").buffer,
-		context = { "buffers", "files" },
-	})
-end, { desc = "Open chat for this buffer" })
+  local last_line = vim.fn.line('$')
+  for l = 1, last_line do
+    local level = vim.fn.foldlevel(l)
+    local closed = vim.fn.foldclosed(l)
+    if level == target_level and closed == -1 then
+      vim.cmd(l .. "foldclose")
+    end
+  end
 
-vim.keymap.set("n", "<leader>ccc", function()
-	require("CopilotChat").open()
-end, { desc = "Close chat" })
+  print("Folded all folds at level " .. target_level)
+end, {})
 
-vim.keymap.set("n", "<leader>ccm", function()
-	vim.cmd("CopilotChatModels")
-end)
+vim.api.nvim_create_user_command("FoldOuter", function()
+  local last_line = vim.fn.line('$')
+  for l = 1, last_line do
+    local level = vim.fn.foldlevel(l)
+    local closed = vim.fn.foldclosed(l)
+    if level == 1 and closed == -1 then
+      vim.cmd(l .. "foldclose")
+    end
+  end
+end, {})
+
+vim.keymap.set("n", "zo", "<Cmd>FoldOuter<CR>", { desc = "Fold Outer Levels" })
+vim.keymap.set("n", "zs", "<Cmd>FoldSameLevel<CR>", { desc = "Fold Same Level" })

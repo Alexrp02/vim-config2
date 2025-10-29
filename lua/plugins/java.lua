@@ -61,14 +61,37 @@ return {
 						.. "/mason/packages/java-debug-adapter/extension/server/"
 					local java_debug_bundle = vim.fn.glob(java_debug_path .. "com.microsoft.java.debug.plugin-*.jar")
 
+					local bundles = { java_debug_bundle }
+
+					local java_test_path = vim.fn.stdpath("data")
+						.. "/mason/packages/java-test/extension/server/"
+					local java_test_bundles = vim.split(vim.fn.glob(java_test_path .. "com.microsoft.java.test.*.jar", 1), "\n")
+
+					local excluded = {
+						"com.microsoft.java.test.runner-jar-with-dependencies.jar",
+						"jacocoagent.jar",
+					}
+
+					for _, java_test_jar in ipairs(java_test_bundles) do
+						local fname = vim.fn.fnamemodify(java_test_jar, ":t")
+						if not vim.tbl_contains(excluded, fname) then
+							table.insert(bundles, java_test_jar)
+						end
+					end
+
 					local config = {
 						cmd = cmd,
 						root_dir = root_dir,
 						init_options = {
-							bundles = {
-								java_debug_bundle,
-							},
+							bundles = bundles,
 						},
+						settings = {
+							java = {
+								test = {
+									enabled = true,
+								}
+							}
+						}
 					}
 
 					-- Start or attach to JDTLS for this buffer
