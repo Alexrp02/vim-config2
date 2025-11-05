@@ -64,18 +64,20 @@ return {
 		end,
 	},
 	{
-		"smjonas/inc-rename.nvim",
+    "mason-org/mason-lspconfig.nvim",
+    opts = {},
+    dependencies = {
+        { "mason-org/mason.nvim", opts = {} },
+        "neovim/nvim-lspconfig",
+    },
 		config = function()
-			require("inc_rename").setup()
-			vim.keymap.set("n", "<leader>cr", function()
-				return ":IncRename " .. vim.fn.expand("<cword>")
-			end, { expr = true, desc = "Rename variable" })
-		end,
-	},
-	-- {
-	-- 	"WieeRd/auto-lsp.nvim",
-	-- 	dependencies = { "neovim/nvim-lspconfig" },
-	-- 	event = "VeryLazy",
-	-- 	opts = {},
-	-- },
+			require("mason-lspconfig").setup({
+				automatic_enable = {
+					exclude = {
+						"ts_ls"
+					}
+				}
+			})
+		end
+}
 }
