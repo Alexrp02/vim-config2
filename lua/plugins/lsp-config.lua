@@ -30,16 +30,16 @@ return {
 				},
 			})
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-			vim.keymap.set("n", "gd", function ()
+			vim.keymap.set("n", "gd", function()
 				vim.cmd("Trouble lsp_definitions")
 			end, {})
-			vim.keymap.set("n", "gD", function ()
+			vim.keymap.set("n", "gD", function()
 				vim.cmd("Trouble lsp_declarations")
 			end, {})
-			vim.keymap.set("n", "gi", function ()
+			vim.keymap.set("n", "gi", function()
 				vim.cmd("Trouble lsp_implementations")
 			end, {})
-			vim.keymap.set("n", "gt", function ()
+			vim.keymap.set("n", "gt", function()
 				vim.cmd("Trouble lsp_type_definitions")
 			end, {})
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
@@ -55,6 +55,26 @@ return {
 						},
 					},
 				},
+			})
+
+			vim.lsp.config("arduino_language_server", {
+				cmd = {
+					"arduino-language-server",
+					"-cli",
+					"arduino-cli",
+					"-cli-config",
+					os.getenv("HOME") .. "/.arduinoIDE/arduino-cli.yaml",
+					"-fqbn",
+					"arduino:avr:uno",
+				},
+				filetypes = { "arduino", "ino" },
+				root_markers = { "*.ino", "platformio.ini", ".git" },
+			})
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "arduino", "ino" },
+				callback = function()
+					vim.lsp.enable("arduino_language_server")
+				end,
 			})
 		end,
 	},
@@ -72,20 +92,20 @@ return {
 		end,
 	},
 	{
-    "mason-org/mason-lspconfig.nvim",
-    opts = {},
-    dependencies = {
-        { "mason-org/mason.nvim", opts = {} },
-        "neovim/nvim-lspconfig",
-    },
+		"mason-org/mason-lspconfig.nvim",
+		opts = {},
+		dependencies = {
+			{ "mason-org/mason.nvim", opts = {} },
+			"neovim/nvim-lspconfig",
+		},
 		config = function()
 			require("mason-lspconfig").setup({
 				automatic_enable = {
 					exclude = {
-						"ts_ls"
-					}
-				}
+						"ts_ls",
+					},
+				},
 			})
-		end
-}
+		end,
+	},
 }
