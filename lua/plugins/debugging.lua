@@ -28,36 +28,31 @@ return {
 			local dap = require("dap")
 			vim.keymap.set("n", "<leader>dc", function()
 				dap.continue()
-			end, { desc = "Continue" }
-			)
+			end, { desc = "Continue" })
 			vim.keymap.set("n", "<leader>dl", function()
 				dap.step_over()
-			end, { desc = "Step Over" }
-			)
+			end, { desc = "Step Over" })
 			vim.keymap.set("n", "<leader>di", function()
 				dap.step_into()
-			end, { desc = "Step Into" }
-			)
+			end, { desc = "Step Into" })
 			vim.keymap.set("n", "<leader>do", function()
 				dap.step_out()
-			end, { desc = "Step Out" }
-			)
+			end, { desc = "Step Out" })
 			vim.keymap.set("n", "<Leader>dt", function()
 				dap.toggle_breakpoint()
-			end, { desc = "Toggle Breakpoint" }
-			)
+			end, { desc = "Toggle Breakpoint" })
 			vim.keymap.set("n", "<Leader>dT", function()
 				dap.toggle_breakpoint(vim.fn.input("Breakpoint condition: "))
-			end, { desc = "Conditional Breakpoint" }
-			)
+			end, { desc = "Conditional Breakpoint" })
 			vim.keymap.set("n", "<Leader>db", function()
 				dap.set_breakpoint()
-			end, { desc = "Set Breakpoint" }
-			)
+			end, { desc = "Set Breakpoint" })
 			vim.keymap.set("n", "<Leader>dr", function()
 				dap.repl.open()
-			end, { desc = "Open REPL" }
-			)
+			end, { desc = "Open REPL" })
+			vim.keymap.set("n", "<Leader>dK", function()
+				require("dap.ui.widgets").hover()
+			end, { desc = "DAP Hover" })
 
 			-- dap.adapters.firefox = {
 			-- 	type = "executable",
@@ -242,7 +237,28 @@ return {
 		},
 		config = function()
 			local dap, dapui = require("dap"), require("dapui")
-			dapui.setup()
+			dapui.setup({
+				layouts = {
+					{
+						position = "right",
+						size = 45,
+						elements = {
+							{ id = "scopes", size = 0.40 },
+							{ id = "watches", size = 0.30 },
+							{ id = "stacks", size = 0.15 },
+							{ id = "breakpoints", size = 0.15 },
+						},
+					},
+					{
+						position = "bottom",
+						size = 12,
+						elements = {
+							"repl",
+							"console",
+						},
+					},
+				},
+			})
 			dap.listeners.before.attach.dapui_config = function()
 				dapui.open()
 			end
@@ -259,12 +275,10 @@ return {
 
 			vim.keymap.set("n", "<leader>du", function()
 				dapui.toggle()
-			end, { desc = "Toggle Dap UI" }
-			)
+			end, { desc = "Toggle Dap UI" })
 			vim.keymap.set("n", "<Leader>de", function()
 				dapui.eval()
-			end, { desc = "Evaluate expression" }
-			)
+			end, { desc = "Evaluate expression" })
 		end,
 	},
 }
