@@ -65,7 +65,7 @@ return {
 					"-cli-config",
 					os.getenv("HOME") .. "/.arduinoIDE/arduino-cli.yaml",
 					"-fqbn",
-					"arduino:avr:uno",
+					"arduino:avr:mega",
 				},
 				filetypes = { "arduino", "ino" },
 				root_markers = { "*.ino", "platformio.ini", ".git" },
@@ -102,7 +102,7 @@ return {
 			require("mason-lspconfig").setup({
 				automatic_enable = {
 					exclude = {
-						"ts_ls",
+						"ts_ls", "arduino_language_server"
 					},
 				},
 			})

@@ -27,6 +27,7 @@ return {
 			vim.keymap.set("n", "<leader>hp", function () gs.preview_hunk() end, {desc = "Git preview hunk"})
 			vim.keymap.set("n", "<leader>hi", function () gs.preview_hunk_inline() end, {desc = "Git preview hunk inline"})
 			vim.keymap.set("n", "<leader>hs", function () gs.stage_hunk() end, {desc = "Git stage hunk"})
+			vim.keymap.set("v", "<leader>hs", function () gs.stage_hunk({vim.fn.line("."), vim.fn.line("v")}) end, {desc = "Git stage hunk visual"})
 			vim.keymap.set("n", "<leader>hr", function () gs.reset_hunk() end, {desc = "Git reset hunk"})
 		end,
 	},

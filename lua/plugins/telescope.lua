@@ -27,6 +27,11 @@ return {
 						n = { ["<c-t>"] = open_with_trouble },
 					},
 				},
+				extensions = {
+					recent_files = {
+						only_cwd = true,
+					},
+				},
 			})
 			vim.keymap.set("n", "<leader><leader>", builtin.find_files, { desc = "Search files with telescope" })
 			vim.keymap.set("n", "<leader>sgg", builtin.live_grep, { desc = "Search with grep on folder" })
@@ -65,6 +70,19 @@ return {
 				},
 			})
 			require("telescope").load_extension("ui-select")
+		end,
+	},
+	{
+		"smartpde/telescope-recent-files",
+		dependencies = { "nvim-telescope/telescope.nvim" },
+		config = function()
+			require("telescope").load_extension("recent_files")
+			vim.api.nvim_set_keymap(
+				"n",
+				"<leader>fr",
+				[[<cmd>lua require('telescope').extensions.recent_files.pick()<CR>]],
+				{ noremap = true, silent = true }
+			)
 		end,
 	},
 	{
@@ -117,9 +135,9 @@ return {
 				keymap = {
 					fzf = {
 						true,
-						["ctrl-q"] = "select-all+accept"
-					}
-				}
+						["ctrl-q"] = "select-all+accept",
+					},
+				},
 			})
 
 			vim.keymap.set("n", "<leader>ff", function()

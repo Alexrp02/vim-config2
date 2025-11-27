@@ -10,6 +10,9 @@ return {
 		},
 	},
 	{
+		"rcarriga/cmp-dap",
+	},
+	{
 		"hrsh7th/nvim-cmp",
 		dependencies = {
 			"hrsh7th/cmp-buffer",
@@ -20,7 +23,16 @@ return {
 			local compare = require("cmp.config.compare")
 			require("luasnip.loaders.from_vscode").lazy_load()
 
+			cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
+				sources = {
+					{ name = "dap" },
+				},
+			})
+
 			cmp.setup({
+				enabled = function()
+					return vim.api.nvim_buf_get_option(0, "buftype") ~= "prompt" or require("cmp_dap").is_dap_buffer()
+				end,
 				snippet = {
 					-- REQUIRED - you must specify a snippet engine
 					expand = function(args)
@@ -72,22 +84,22 @@ return {
 						return vim_item
 					end,
 				},
-				sorting = {
-					priority_weight = 1.0,
-					comparators = {
-						-- compare.score_offset, -- not good at all
-						compare.score, -- based on :  score = score + ((#sources - (source_index - 1)) * sorting.priority_weight)
-						compare.locality,
-						compare.recently_used,
-						compare.offset,
-						compare.order,
-						-- compare.scopes, -- what?
-						-- compare.sort_text,
-						-- compare.exact,
-						-- compare.kind,
-						-- compare.length, -- useless
-					},
-				},
+				-- sorting = {
+				-- 	priority_weight = 1.0,
+				-- 	comparators = {
+				-- 		-- compare.score_offset, -- not good at all
+				-- 		compare.score, -- based on :  score = score + ((#sources - (source_index - 1)) * sorting.priority_weight)
+				-- 		compare.locality,
+				-- 		compare.recently_used,
+				-- 		compare.offset,
+				-- 		compare.order,
+				-- 		-- compare.scopes, -- what?
+				-- 		-- compare.sort_text,
+				-- 		-- compare.exact,
+				-- 		-- compare.kind,
+				-- 		-- compare.length, -- useless
+				-- 	},
+				-- },
 			})
 		end,
 	},
