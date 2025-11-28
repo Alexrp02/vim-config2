@@ -218,6 +218,9 @@ return {
 					end,
 					cwd = "${workspaceFolder}",
 					stopOnEntry = false,
+					preRunCommands = {
+						"command script import " .. vim.fn.stdpath("config") .. "/utils/rust_prettifier_for_lldb.py",
+					},
 				},
 			}
 		end,
