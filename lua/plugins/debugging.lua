@@ -194,6 +194,20 @@ return {
 						NODE_TLS_REJECT_UNAUTHORIZED = "0",
 					},
 				})
+				table.insert(dap.configurations[lang], {
+					name = "Debug Current Jest file",
+					type = "pwa-node",
+					request = "launch",
+					runtimeExecutable = "node",
+					runtimeArgs = {
+						"./node_modules/jest/bin/jest.js",
+						"${file}",
+						"--runInBand",
+					},
+					cwd = vim.fn.getcwd(),
+					console = "integratedTerminal",
+					sourceMaps = true,
+				})
 			end
 			-- RUST DEBUGGING
 			dap.adapters.codelldb = {
