@@ -26,18 +26,11 @@ return {
 			vim.o.foldlevelstart = 99
 			vim.o.foldenable = true
 
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities.textDocument.foldingRange = {
-				dynamicRegistration = false,
-				lineFoldingOnly = true,
-			}
-			local language_servers = vim.lsp.get_clients()
-			for _, ls in ipairs(language_servers) do
-				vim.lsp.config(ls, {
-					capabilities = capabilities,
-				})
-			end
-			require("ufo").setup()
+			require("ufo").setup({
+				provider_selector = function(bufnr, filetype, buftype)
+					return { "treesitter", "indent" }
+				end,
+			})
 		end,
 	},
 }

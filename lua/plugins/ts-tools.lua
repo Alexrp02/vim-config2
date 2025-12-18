@@ -2,9 +2,17 @@ return {
 	{
 		"pmizio/typescript-tools.nvim",
 		dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+		ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
 		opts = {},
 		config = function()
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities.textDocument.foldingRange = {
+				dynamicRegistration = false,
+				lineFoldingOnly = true,
+			}
+
 			require("typescript-tools").setup({
+				capabilities = capabilities,
 				settings = {
 					-- Performance settings
 					separate_diagnostic_server = true,
