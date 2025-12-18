@@ -26,6 +26,15 @@ return {
 		},
 		config = function()
 			local dap = require("dap")
+
+			-- SIGN CONFIGURATION
+			vim.fn.sign_define("DapBreakpoint", { text = "🐤", texthl = "", linehl = "", numhl = "" })
+			vim.fn.sign_define("DapBreakpointCondition", { text = "🐣", texthl = "", linehl = "", numhl = "" })
+			vim.fn.sign_define("DapStopped", { text = "➡️", texthl = "", linehl = "", numhl = "" })
+			vim.fn.sign_define("DapBreakpointRejected", { text = "❌", texthl = "", linehl = "", numhl = "" })
+
+
+			-- KEYMAPS
 			vim.keymap.set("n", "<leader>dc", function()
 				dap.continue()
 			end, { desc = "Continue" })
@@ -86,6 +95,8 @@ return {
 			-- 		},
 			-- 	},
 			-- }
+
+			-- ADAPTERS AND CONFIGURATIONS
 			dap.adapters.node = {
 				type = "executable",
 				command = "node",
