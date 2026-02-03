@@ -11,6 +11,15 @@ return {
 				lineFoldingOnly = true,
 			}
 
+			vim.api.nvim_create_user_command("JestFile", function()
+				local file = vim.fn.expand("%:p")
+				if vim.fn.filereadable(file) == 1 then
+					vim.cmd("split | terminal npx jest " .. vim.fn.fnameescape(file))
+				else
+					print("Current buffer is not a file.")
+				end
+			end, { desc = "Run Jest on current buffer file" })
+
 			require("typescript-tools").setup({
 				capabilities = capabilities,
 				settings = {
