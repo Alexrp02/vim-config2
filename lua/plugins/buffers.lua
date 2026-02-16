@@ -39,12 +39,12 @@ return {
 				end,
 				desc = "Delete current buffer",
 			},
+			{ "<leader>b>", "<cmd>BufferLineMoveNext<cr>", desc = "Move Buffer Right" },
+			{ "<leader>b<", "<cmd>BufferLineMovePrev<cr>", desc = "Move Buffer Left" },
 			{ "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
 			{ "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
 			{ "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
 			{ "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
-			{ "[B", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" },
-			{ "]B", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
 		},
 		opts = {
 			options = {
