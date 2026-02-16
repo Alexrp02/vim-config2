@@ -47,15 +47,7 @@ return {
 				":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>",
 				{ desc = "Live grep with arguments" }
 			)
-			vim.keymap.set("n", "<leader>bb", ":Telescope buffers<CR>", { desc = "Buffers list" })
-			vim.keymap.set("n", "<leader>ss", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Buffer symbols" })
-			-- Spell suggestions keymap
-			vim.keymap.set(
-				"n",
-				"<leader>fs",
-				require("telescope.builtin").spell_suggest,
-				{ desc = "Spell suggestions" }
-			)
+			vim.keymap.set("n", "<leader>bb", "<cmd>Telescope buffers<CR>", { desc = "Buffers list" })
 			telescope.load_extension("live_grep_args")
 		end,
 	},
@@ -146,6 +138,12 @@ return {
 			vim.keymap.set("n", "<leader>fg", function()
 				require("fzf-lua").live_grep()
 			end, { desc = "Fuzzy grep" })
+			vim.keymap.set("n", "<leader>ss", function ()
+				require("fzf-lua").lsp_document_symbols()
+			end, { desc = "Buffer symbols" })
+			vim.keymap.set("n", "<leader>fs", function ()
+				require("fzf-lua").lsp_workspace_symbols()
+			end, { desc = "Workspace symbols" })
 		end,
 	},
 }
