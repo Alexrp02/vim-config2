@@ -214,6 +214,7 @@ return {
 						"./node_modules/jest/bin/jest.js",
 						"${file}",
 						"--runInBand",
+						"--testPathIgnorePatterns=a^"
 					},
 					cwd = vim.fn.getcwd(),
 					console = "integratedTerminal",

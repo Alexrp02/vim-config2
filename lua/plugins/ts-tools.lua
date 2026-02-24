@@ -14,7 +14,7 @@ return {
 			vim.api.nvim_create_user_command("JestFile", function()
 				local file = vim.fn.expand("%:p")
 				if vim.fn.filereadable(file) == 1 then
-					vim.cmd("split | terminal npx jest " .. vim.fn.fnameescape(file))
+					vim.cmd("split | terminal npx jest " .. vim.fn.fnameescape(file) .. " --testPathIgnorePatterns=a^")
 				else
 					print("Current buffer is not a file.")
 				end
