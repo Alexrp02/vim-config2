@@ -1,3 +1,17 @@
+local function fzf_dirs_to_oil()
+	require("fzf-lua").fzf_exec("fd --type d --hidden --exclude .git", {
+		prompt = "Open in Oil❯ ",
+		actions = {
+			["default"] = function(selected)
+				if selected and selected[1] then
+					-- selected[1] is the raw string output from fd
+					require("oil").open(selected[1])
+				end
+			end,
+		},
+	})
+end
+
 return {
 	{
 		"nvim-telescope/telescope.nvim",
@@ -138,12 +152,13 @@ return {
 			vim.keymap.set("n", "<leader>fg", function()
 				require("fzf-lua").live_grep()
 			end, { desc = "Fuzzy grep" })
-			vim.keymap.set("n", "<leader>ss", function ()
+			vim.keymap.set("n", "<leader>ss", function()
 				require("fzf-lua").lsp_document_symbols()
 			end, { desc = "Buffer symbols" })
-			vim.keymap.set("n", "<leader>fs", function ()
+			vim.keymap.set("n", "<leader>fs", function()
 				require("fzf-lua").lsp_workspace_symbols()
 			end, { desc = "Workspace symbols" })
+			vim.keymap.set("n", "<leader>fd", fzf_dirs_to_oil, { desc = "Fuzzy find directories in Oil" })
 		end,
 	},
 }
