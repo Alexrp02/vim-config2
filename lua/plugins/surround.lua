@@ -3,10 +3,6 @@ return {
 	version = "*", -- Use for stability; omit to use `main` branch for the latest features
 	event = "VeryLazy",
 	config = function()
-		require("nvim-surround").setup({
-			keymaps = {
-				visual = "<CR>",
-			},
-		})
+		vim.keymap.set("v", "<CR>", "<Plug>(nvim-surround-visual)", { desc = "Surround with operator" })
 	end,
 }
