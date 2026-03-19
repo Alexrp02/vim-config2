@@ -40,6 +40,12 @@ vim.keymap.set("n", "<leader>qq", function()
 	vim.cmd("q")
 end)
 
+-- Tabs
+vim.keymap.set("n", "<leader>tn", ":tabnew<CR>", { desc = "New Tab" })
+vim.keymap.set("n", "<leader>tb", ":tabnew %<CR>", { desc = "New Tab from Buffer" })
+vim.keymap.set("n", "<leader>to", ":tabonly<CR>", { desc = "Close Other Tabs" })
+vim.keymap.set("n", "<leader>tq", ":tabclose<CR>", { desc = "Close Tab" })
+
 -- Navigation
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-j>", "<C-w>j")
