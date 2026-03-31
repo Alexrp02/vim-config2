@@ -212,6 +212,87 @@ local function apply_highlights(buf, ns, display_count, line_map, hl_data, is_ol
 	end
 end
 
+local CONTEXT_LINES = 3
+
+--- Compute ranges of unchanged lines that should be folded.
+--- Returns list of {start, end} pairs (1-indexed display lines).
+local function compute_fold_ranges(changed_set, total)
+	-- Expand changed lines by context
+	local visible = {}
+	for i = 1, total do
+		if changed_set[i] then
+			for j = math.max(1, i - CONTEXT_LINES), math.min(total, i + CONTEXT_LINES) do
+				visible[j] = true
+			end
+		end
+	end
+
+	-- Collect contiguous ranges of non-visible lines
+	local ranges = {}
+	local fold_start = nil
+	for i = 1, total do
+		if not visible[i] then
+			if not fold_start then
+				fold_start = i
+			end
+		else
+			if fold_start then
+				table.insert(ranges, { fold_start, i - 1 })
+				fold_start = nil
+			end
+		end
+	end
+	if fold_start then
+		table.insert(ranges, { fold_start, total })
+	end
+	return ranges
+end
+
+--- Apply identical manual folds on both diff windows.
+local function apply_folds(fold_ranges, old_buf, new_buf)
+	-- Detach nvim-ufo if loaded so it doesn't override our manual folds
+	local ufo_ok, ufo = pcall(require, "ufo")
+	if ufo_ok and ufo.detach then
+		pcall(ufo.detach, old_buf)
+		pcall(ufo.detach, new_buf)
+	end
+
+	for _, win in ipairs({ state.old_win, state.new_win }) do
+		if vim.api.nvim_win_is_valid(win) then
+			vim.wo[win].foldmethod = "manual"
+			vim.wo[win].foldenable = true
+			vim.api.nvim_win_call(win, function()
+				-- Clear any existing folds
+				vim.cmd("normal! zE")
+				for _, range in ipairs(fold_ranges) do
+					vim.cmd(range[1] .. "," .. range[2] .. "fold")
+				end
+			end)
+			-- Override ufo's foldlevel=99 so our folds are actually closed
+			vim.wo[win].foldlevel = 0
+		end
+	end
+end
+
+--- Run a fold normal-mode command in both diff windows to keep them in sync.
+local function sync_fold_action(action)
+	return function()
+		for _, win in ipairs({ state.old_win, state.new_win }) do
+			if vim.api.nvim_win_is_valid(win) then
+				vim.api.nvim_win_call(win, function()
+					pcall(vim.cmd, "normal! " .. action)
+				end)
+			end
+		end
+	end
+end
+
+--- Custom fold text shown for collapsed unchanged regions.
+function M.foldtext()
+	local count = vim.v.foldend - vim.v.foldstart + 1
+	return "··· " .. count .. " unchanged lines ···"
+end
+
 --- Create a read-only scratch buffer with the given lines.
 --- Filetype must be set AFTER the buffer is placed in a window so treesitter attaches.
 local function create_content_buf(lines)
@@ -327,7 +408,9 @@ function M.create_layout()
 		vim.wo[win].cursorbind = true
 		vim.wo[win].wrap = false
 		vim.wo[win].foldmethod = "manual"
-		vim.wo[win].foldenable = false
+		vim.wo[win].foldenable = true
+		vim.wo[win].foldminlines = 1
+		vim.wo[win].foldtext = "v:lua.require('difftastic-review').foldtext()"
 	end
 
 	-- Winbar title
@@ -438,11 +521,30 @@ function M.show_diff()
 	end
 
 	-- Apply difftastic AST highlights (priority > treesitter's 100)
+	local lhs_hl, rhs_hl = {}, {}
 	if difft_data then
-		local lhs_hl, rhs_hl = parse_highlights(difft_data.chunks)
+		lhs_hl, rhs_hl = parse_highlights(difft_data.chunks)
 		apply_highlights(old_buf, state.ns, #old_disp, old_map, lhs_hl, true)
 		apply_highlights(new_buf, state.ns, #new_disp, new_map, rhs_hl, false)
 	end
+
+	-- Fold unchanged lines (keep CONTEXT_LINES of context around changes)
+	local changed_set = {}
+	for i = 1, #old_disp do
+		-- Padding on either side means this display line is part of a change
+		if not old_map[i] or not new_map[i] then
+			changed_set[i] = true
+		end
+		-- Has difft highlight data on either side
+		if old_map[i] and lhs_hl[old_map[i]] then
+			changed_set[i] = true
+		end
+		if new_map[i] and rhs_hl[new_map[i]] then
+			changed_set[i] = true
+		end
+	end
+	local fold_ranges = compute_fold_ranges(changed_set, #old_disp)
+	apply_folds(fold_ranges, old_buf, new_buf)
 
 	-- Winbar labels
 	local old_label = state.diff_base and (state.diff_base .. ":" .. file) or ("index:" .. file)
@@ -588,7 +690,17 @@ function M.set_keymaps(buf)
 	map("gf", M.goto_file, "Go to file at cursor position")
 	map("q", M.close, "Close review")
 
-	if buf == state.file_list_buf then
+	-- Synced fold commands (both windows open/close together)
+	if buf ~= state.file_list_buf then
+		map("zo", sync_fold_action("zo"), "Open fold")
+		map("zO", sync_fold_action("zO"), "Open fold recursively")
+		map("zc", sync_fold_action("zc"), "Close fold")
+		map("zC", sync_fold_action("zC"), "Close fold recursively")
+		map("za", sync_fold_action("za"), "Toggle fold")
+		map("zA", sync_fold_action("zA"), "Toggle fold recursively")
+		map("zR", sync_fold_action("zR"), "Open all folds")
+		map("zM", sync_fold_action("zM"), "Close all folds")
+	else
 		map("<CR>", M.select_file, "Select file")
 	end
 end
