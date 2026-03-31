@@ -612,9 +612,28 @@ function M.stage_file()
 	local out = vim.fn.system("git add " .. vim.fn.shellescape(file))
 	if vim.v.shell_error ~= 0 then
 		vim.notify("Failed to stage: " .. out, vim.log.levels.ERROR)
-	else
-		vim.notify("Staged: " .. file, vim.log.levels.INFO)
+		return
 	end
+
+	vim.notify("Staged: " .. file, vim.log.levels.INFO)
+
+	-- Remove the staged file from the list
+	table.remove(state.files, state.current_index)
+
+	-- If no files left, close the review
+	if #state.files == 0 then
+		vim.notify("All files staged", vim.log.levels.INFO)
+		M.close()
+		return
+	end
+
+	-- Clamp index to the new list bounds (stay at same position, or move back if we were at the end)
+	if state.current_index > #state.files then
+		state.current_index = #state.files
+	end
+
+	M.render_file_list()
+	M.show_diff()
 end
 
 function M.goto_file()
