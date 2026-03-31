@@ -250,19 +250,22 @@ end
 
 --- Apply identical manual folds on both diff windows.
 local function apply_folds(fold_ranges, old_buf, new_buf)
-	-- Detach nvim-ufo if loaded so it doesn't override our manual folds
-	local ufo_ok, ufo = pcall(require, "ufo")
-	if ufo_ok and ufo.detach then
+	-- Detach nvim-ufo if already loaded (use package.loaded to avoid triggering lazy-load)
+	local ufo = package.loaded["ufo"]
+	if ufo and ufo.detach then
 		pcall(ufo.detach, old_buf)
 		pcall(ufo.detach, new_buf)
 	end
 
 	for _, win in ipairs({ state.old_win, state.new_win }) do
 		if vim.api.nvim_win_is_valid(win) then
+			-- Force all fold settings here at the last moment, after ufo detach
 			vim.wo[win].foldmethod = "manual"
 			vim.wo[win].foldenable = true
+			vim.wo[win].foldcolumn = "0"
+			vim.wo[win].foldtext =
+				"'··· ' .. (v:foldend - v:foldstart + 1) .. ' unchanged lines ···'"
 			vim.api.nvim_win_call(win, function()
-				-- Clear any existing folds
 				vim.cmd("normal! zE")
 				for _, range in ipairs(fold_ranges) do
 					vim.cmd(range[1] .. "," .. range[2] .. "fold")
@@ -285,12 +288,6 @@ local function sync_fold_action(action)
 			end
 		end
 	end
-end
-
---- Custom fold text shown for collapsed unchanged regions.
-function M.foldtext()
-	local count = vim.v.foldend - vim.v.foldstart + 1
-	return "··· " .. count .. " unchanged lines ···"
 end
 
 --- Create a read-only scratch buffer with the given lines.
@@ -409,8 +406,6 @@ function M.create_layout()
 		vim.wo[win].wrap = false
 		vim.wo[win].foldmethod = "manual"
 		vim.wo[win].foldenable = true
-		vim.wo[win].foldminlines = 1
-		vim.wo[win].foldtext = "v:lua.require('difftastic-review').foldtext()"
 	end
 
 	-- Winbar title
