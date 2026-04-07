@@ -4,6 +4,7 @@ local state = {
 	files = {},
 	current_index = 1,
 	diff_base = nil,
+	diff_label = nil, -- original branch/ref name for display
 	git_root = nil,
 	-- Windows and buffers
 	file_list_buf = nil,
@@ -331,11 +332,25 @@ function M.open(opts)
 		M.close()
 	end
 
-	state.diff_base = args ~= "" and args or nil
 	state.git_root = get_git_root()
 	if not state.git_root then
 		vim.notify("Not in a git repository", vim.log.levels.ERROR)
 		return
+	end
+
+	-- When comparing against a branch, use the merge-base so we only see
+	-- this branch's changes (matches what GitLab/GitHub MRs show).
+	if args ~= "" then
+		local merge_base = vim.fn.systemlist("git merge-base " .. args .. " HEAD")[1]
+		if vim.v.shell_error ~= 0 or not merge_base or merge_base == "" then
+			vim.notify("Could not find merge-base with " .. args, vim.log.levels.ERROR)
+			return
+		end
+		state.diff_base = merge_base
+		state.diff_label = args
+	else
+		state.diff_base = nil
+		state.diff_label = nil
 	end
 
 	local cmd = state.diff_base and ("git diff --name-only " .. state.diff_base) or "git diff --name-only"
@@ -410,7 +425,7 @@ function M.create_layout()
 
 	-- Winbar title
 	local title = state.diff_base
-			and string.format(" Difftastic: %s (%d files)", state.diff_base, #state.files)
+			and string.format(" Difftastic: %s (%d files)", state.diff_label, #state.files)
 		or string.format(" Difftastic: unstaged (%d files)", #state.files)
 	vim.wo[state.file_list_win].winbar = title
 
@@ -542,7 +557,7 @@ function M.show_diff()
 	apply_folds(fold_ranges, old_buf, new_buf)
 
 	-- Winbar labels
-	local old_label = state.diff_base and (state.diff_base .. ":" .. file) or ("index:" .. file)
+	local old_label = state.diff_label and (state.diff_label .. ":" .. file) or ("index:" .. file)
 	vim.wo[state.old_win].winbar = " " .. old_label
 	vim.wo[state.new_win].winbar = " " .. file
 
@@ -674,6 +689,7 @@ function M.cleanup_state()
 	state.files = {}
 	state.current_index = 1
 	state.diff_base = nil
+	state.diff_label = nil
 	state.git_root = nil
 	state.file_list_buf = nil
 	state.file_list_win = nil
