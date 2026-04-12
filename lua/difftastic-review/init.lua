@@ -3,8 +3,12 @@ local M = {}
 local state = {
 	files = {},
 	current_index = 1,
+	review_mode = "worktree", -- worktree | branch | commit
 	diff_base = nil,
 	diff_label = nil, -- original branch/ref name for display
+	old_source = "index", -- index | ref | empty
+	new_source = "worktree", -- worktree | ref
+	new_ref = nil,
 	git_root = nil,
 	-- Windows and buffers
 	file_list_buf = nil,
@@ -48,21 +52,33 @@ local function get_git_root()
 	return root
 end
 
-local function get_old_content(diff_base, file)
-	local ref = diff_base and (diff_base .. ":" .. file) or (":" .. file)
-	local lines = vim.fn.systemlist({ "git", "show", ref })
+local function get_content(source, ref, git_root, file)
+	if source == "empty" then
+		return {}
+	end
+
+	if source == "worktree" then
+		local path = git_root .. "/" .. file
+		if vim.fn.filereadable(path) == 0 then
+			return {}
+		end
+		return vim.fn.readfile(path)
+	end
+
+	local refspec
+	if source == "index" then
+		refspec = ":" .. file
+	elseif source == "ref" and ref then
+		refspec = ref .. ":" .. file
+	else
+		return {}
+	end
+
+	local lines = vim.fn.systemlist({ "git", "show", refspec })
 	if vim.v.shell_error ~= 0 then
 		return {}
 	end
 	return lines
-end
-
-local function get_new_content(git_root, file)
-	local path = git_root .. "/" .. file
-	if vim.fn.filereadable(path) == 0 then
-		return {}
-	end
-	return vim.fn.readfile(path)
 end
 
 local function run_difft(old_path, new_path)
@@ -325,7 +341,11 @@ end
 
 function M.open(opts)
 	opts = opts or {}
-	local args = opts.args or ""
+	local args = vim.trim(opts.args or "")
+	local mode = opts.mode
+	if not mode then
+		mode = args ~= "" and "branch" or "worktree"
+	end
 
 	-- Close existing review if open
 	if state.file_list_buf and vim.api.nvim_buf_is_valid(state.file_list_buf) then
@@ -338,22 +358,74 @@ function M.open(opts)
 		return
 	end
 
-	-- When comparing against a branch, use the merge-base so we only see
-	-- this branch's changes (matches what GitLab/GitHub MRs show).
-	if args ~= "" then
-		local merge_base = vim.fn.systemlist("git merge-base " .. args .. " HEAD")[1]
-		if vim.v.shell_error ~= 0 or not merge_base or merge_base == "" then
-			vim.notify("Could not find merge-base with " .. args, vim.log.levels.ERROR)
+	if mode == "commit" then
+		if args == "" then
+			vim.notify("Commit ref is required", vim.log.levels.ERROR)
 			return
 		end
-		state.diff_base = merge_base
-		state.diff_label = args
+
+		local commit = vim.fn.systemlist({ "git", "rev-parse", "--verify", args .. "^{commit}" })[1]
+		if vim.v.shell_error ~= 0 or not commit or commit == "" then
+			vim.notify("Invalid commit: " .. args, vim.log.levels.ERROR)
+			return
+		end
+
+		local short = vim.fn.systemlist({ "git", "rev-parse", "--short", commit })[1] or args
+		if vim.v.shell_error ~= 0 or short == "" then
+			short = args
+		end
+
+		local parents_line = vim.fn.systemlist({ "git", "rev-list", "--parents", "-n", "1", commit })[1] or ""
+		local parts = vim.split(vim.trim(parents_line), "%s+", { trimempty = true })
+		local parent = parts[2]
+
+		state.review_mode = "commit"
+		state.diff_base = parent
+		state.diff_label = short
+		state.old_source = parent and "ref" or "empty"
+		state.new_source = "ref"
+		state.new_ref = commit
+	elseif mode == "branch" then
+		if args == "" then
+			state.review_mode = "worktree"
+			state.diff_base = nil
+			state.diff_label = nil
+			state.old_source = "index"
+			state.new_source = "worktree"
+			state.new_ref = nil
+		else
+			-- When comparing against a branch, use the merge-base so we only see
+			-- this branch's changes (matches what GitLab/GitHub MRs show).
+			local merge_base = vim.fn.systemlist({ "git", "merge-base", args, "HEAD" })[1]
+			if vim.v.shell_error ~= 0 or not merge_base or merge_base == "" then
+				vim.notify("Could not find merge-base with " .. args, vim.log.levels.ERROR)
+				return
+			end
+			state.review_mode = "branch"
+			state.diff_base = merge_base
+			state.diff_label = args
+			state.old_source = "ref"
+			state.new_source = "worktree"
+			state.new_ref = nil
+		end
 	else
+		state.review_mode = "worktree"
 		state.diff_base = nil
 		state.diff_label = nil
+		state.old_source = "index"
+		state.new_source = "worktree"
+		state.new_ref = nil
 	end
 
-	local cmd = state.diff_base and ("git diff --name-only " .. state.diff_base) or "git diff --name-only"
+	local cmd
+	if state.review_mode == "commit" then
+		cmd = { "git", "diff", "--name-only", state.new_ref .. "^!" }
+	elseif state.diff_base then
+		cmd = { "git", "diff", "--name-only", state.diff_base }
+	else
+		cmd = { "git", "diff", "--name-only" }
+	end
+
 	local result = vim.fn.systemlist(cmd)
 	if vim.v.shell_error ~= 0 then
 		vim.notify("git diff failed", vim.log.levels.ERROR)
@@ -424,9 +496,14 @@ function M.create_layout()
 	end
 
 	-- Winbar title
-	local title = state.diff_base
-			and string.format(" Difftastic: %s (%d files)", state.diff_label, #state.files)
-		or string.format(" Difftastic: unstaged (%d files)", #state.files)
+	local title
+	if state.review_mode == "commit" then
+		title = string.format(" Difftastic: commit %s (%d files)", state.diff_label, #state.files)
+	elseif state.review_mode == "branch" then
+		title = string.format(" Difftastic: %s (%d files)", state.diff_label, #state.files)
+	else
+		title = string.format(" Difftastic: unstaged (%d files)", #state.files)
+	end
 	vim.wo[state.file_list_win].winbar = title
 
 	M.set_keymaps(state.file_list_buf)
@@ -475,18 +552,25 @@ function M.show_diff()
 	local prev_win = vim.api.nvim_get_current_win()
 
 	-- Fetch old and new content
-	local old_lines = get_old_content(state.diff_base, file)
-	local new_lines = get_new_content(state.git_root, file)
+	local old_lines = get_content(state.old_source, state.diff_base, state.git_root, file)
+	local new_lines = get_content(state.new_source, state.new_ref, state.git_root, file)
 
 	-- Write old content to a temp file (preserve extension for language detection)
 	local ext = vim.fn.fnamemodify(file, ":e")
 	local old_tmp = vim.fn.tempname() .. (ext ~= "" and ("." .. ext) or "")
 	vim.fn.writefile(old_lines, old_tmp)
 
-	-- Resolve new file path (may need temp if deleted)
-	local new_path = state.git_root .. "/" .. file
+	-- Resolve new file path
+	local new_path
 	local new_tmp = nil
-	if vim.fn.filereadable(new_path) == 0 then
+	if state.new_source == "worktree" then
+		new_path = state.git_root .. "/" .. file
+		if vim.fn.filereadable(new_path) == 0 then
+			new_tmp = vim.fn.tempname() .. (ext ~= "" and ("." .. ext) or "")
+			vim.fn.writefile(new_lines, new_tmp)
+			new_path = new_tmp
+		end
+	else
 		new_tmp = vim.fn.tempname() .. (ext ~= "" and ("." .. ext) or "")
 		vim.fn.writefile(new_lines, new_tmp)
 		new_path = new_tmp
@@ -557,9 +641,20 @@ function M.show_diff()
 	apply_folds(fold_ranges, old_buf, new_buf)
 
 	-- Winbar labels
-	local old_label = state.diff_label and (state.diff_label .. ":" .. file) or ("index:" .. file)
+	local old_label
+	local new_label
+	if state.review_mode == "commit" then
+		old_label = state.diff_base and (state.diff_label .. "^:" .. file) or ("empty:" .. file)
+		new_label = state.diff_label .. ":" .. file
+	elseif state.review_mode == "branch" then
+		old_label = state.diff_label .. ":" .. file
+		new_label = file
+	else
+		old_label = "index:" .. file
+		new_label = file
+	end
 	vim.wo[state.old_win].winbar = " " .. old_label
-	vim.wo[state.new_win].winbar = " " .. file
+	vim.wo[state.new_win].winbar = " " .. new_label
 
 	-- Set keymaps on new buffers
 	M.set_keymaps(old_buf)
@@ -620,6 +715,11 @@ end
 -- Actions --------------------------------------------------------------------
 
 function M.stage_file()
+	if state.review_mode == "commit" then
+		vim.notify("Cannot stage files in commit review mode", vim.log.levels.WARN)
+		return
+	end
+
 	local file = state.files[state.current_index]
 	if not file then
 		return
@@ -688,8 +788,12 @@ end
 function M.cleanup_state()
 	state.files = {}
 	state.current_index = 1
+	state.review_mode = "worktree"
 	state.diff_base = nil
 	state.diff_label = nil
+	state.old_source = "index"
+	state.new_source = "worktree"
+	state.new_ref = nil
 	state.git_root = nil
 	state.file_list_buf = nil
 	state.file_list_win = nil
@@ -738,16 +842,31 @@ end
 -- Setup ----------------------------------------------------------------------
 
 function M.setup()
+	local complete_refs = function()
+		local branches = vim.fn.systemlist("git branch --format='%(refname:short)'")
+		local remotes = vim.fn.systemlist("git branch -r --format='%(refname:short)'")
+		local tags = vim.fn.systemlist("git tag --list")
+		local commits = vim.fn.systemlist("git log --format='%h' -n 200")
+		local refs = vim.list_extend(branches, remotes)
+		refs = vim.list_extend(refs, tags)
+		refs = vim.list_extend(refs, commits)
+		return refs
+	end
+
 	vim.api.nvim_create_user_command("DifftasticReview", function(opts)
 		M.open(opts)
 	end, {
 		nargs = "?",
 		desc = "Open difftastic-based code review",
-		complete = function()
-			local branches = vim.fn.systemlist("git branch --format='%(refname:short)'")
-			local remotes = vim.fn.systemlist("git branch -r --format='%(refname:short)'")
-			return vim.list_extend(branches, remotes)
-		end,
+		complete = complete_refs,
+	})
+
+	vim.api.nvim_create_user_command("DifftasticReviewCommit", function(opts)
+		M.open({ args = opts.args, mode = "commit" })
+	end, {
+		nargs = 1,
+		desc = "Open difftastic review for one commit",
+		complete = complete_refs,
 	})
 end
 
