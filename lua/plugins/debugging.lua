@@ -220,6 +220,31 @@ return {
 					console = "integratedTerminal",
 					sourceMaps = true,
 				})
+				table.insert(dap.configurations[lang], {
+					name = "Debug Jest test at cursor",
+					type = "pwa-node",
+					request = "launch",
+					runtimeExecutable = "node",
+					runtimeArgs = function()
+						local jest_utils = require("utils.jest")
+						local test_name = jest_utils.get_test_at_cursor()
+						if not test_name then
+							vim.notify("No test found at cursor position", vim.log.levels.WARN)
+							return nil
+						end
+						return {
+							"./node_modules/jest/bin/jest.js",
+							vim.fn.expand("%:p"),
+							"--runInBand",
+							"--testPathIgnorePatterns=a^",
+							"-t",
+							test_name,
+						}
+					end,
+					cwd = vim.fn.getcwd(),
+					console = "integratedTerminal",
+					sourceMaps = true,
+				})
 			end
 			-- RUST DEBUGGING
 			dap.adapters.codelldb = {
