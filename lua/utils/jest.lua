@@ -1,5 +1,13 @@
 local M = {}
 
+--- Escapes special regex characters for Jest's -t pattern matching
+---@param str string
+---@return string
+local function escape_regex(str)
+	-- Escape special regex characters: ( ) [ ] { } . * + ? ^ $ | \
+	return str:gsub("([%(%)%[%]%{%}%.%*%+%?%^%$%|\\])", "\\%1")
+end
+
 --- Gets the test name(s) at cursor position using treesitter
 --- Builds full path for nested describe/it blocks (e.g., "Parent > Child > test name")
 ---@return string|nil
@@ -76,7 +84,8 @@ function M.get_test_at_cursor()
 	end
 
 	-- Join with " " to create the full test path pattern for Jest -t
-	return table.concat(path_parts, " ")
+	-- Escape regex special characters so parentheses, brackets, etc. match literally
+	return escape_regex(table.concat(path_parts, " "))
 end
 
 return M
