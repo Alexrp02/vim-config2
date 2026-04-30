@@ -9,7 +9,14 @@ return {
 		"neovim/nvim-lspconfig",
 		lazy = false,
 		config = function()
-			-- local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			local ok, blink = pcall(require, "blink.cmp")
+			if ok then
+				capabilities = blink.get_lsp_capabilities()
+			end
+			vim.lsp.config("*", {
+				capabilities = capabilities,
+			})
 
 			-- lspconfig.docker_compose_language_service.setup({
 			-- 	capabilities = capabilities,
