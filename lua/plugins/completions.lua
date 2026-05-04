@@ -13,6 +13,7 @@ return {
 		version = "1.*", -- pin stable major to avoid v2 breaking changes
 		dependencies = {
 			"L3MON4D3/LuaSnip",
+			"daliusd/blink-cmp-fuzzy-path",
 		},
 		init = function()
 			local function set_blink_highlights()
@@ -53,7 +54,17 @@ return {
 				return ft ~= "dap-repl" and ft ~= "dapui_watches" and ft ~= "dapui_hover"
 			end,
 			sources = {
-				default = { "lsp", "path", "buffer", "snippets" },
+				default = { "fuzzy-path", "lsp", "path", "buffer", "snippets" },
+				providers = {
+					["fuzzy-path"] = {
+						name = "Fuzzy Path",
+						module = "blink-cmp-fuzzy-path",
+						score_offset = 0,
+						opts = {
+							filetypes = { "markdown", "json" }, -- optional
+						},
+					},
+				},
 			},
 			fuzzy = {
 				implementation = "prefer_rust_with_warning",
