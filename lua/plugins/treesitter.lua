@@ -15,6 +15,7 @@ return {
 				"vimdoc",
 				"markdown",
 				"markdown_inline",
+				"json",
 			}
 			require("nvim-treesitter").install(parsers)
 
