@@ -156,7 +156,7 @@ return {
 				require("fzf-lua").lsp_document_symbols()
 			end, { desc = "Buffer symbols" })
 			vim.keymap.set("n", "<leader>fs", function()
-				require("fzf-lua").lsp_workspace_symbols()
+				require("fzf-lua").lsp_live_workspace_symbols()
 			end, { desc = "Workspace symbols" })
 			vim.keymap.set("n", "<leader>fd", fzf_dirs_to_oil, { desc = "Fuzzy find directories in Oil" })
 		end,
