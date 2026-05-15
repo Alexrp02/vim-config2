@@ -16,6 +16,8 @@ return {
 				"markdown",
 				"markdown_inline",
 				"json",
+				"html",
+				"angular",
 			}
 			require("nvim-treesitter").install(parsers)
 

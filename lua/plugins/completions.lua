@@ -14,6 +14,7 @@ return {
 		dependencies = {
 			"L3MON4D3/LuaSnip",
 			"daliusd/blink-cmp-fuzzy-path",
+			"kristijanhusak/vim-dadbod-completion",
 		},
 		init = function()
 			local function set_blink_highlights()
@@ -55,6 +56,11 @@ return {
 			end,
 			sources = {
 				default = { "fuzzy-path", "lsp", "path", "buffer", "snippets" },
+				per_filetype = {
+					sql = { "snippets", "dadbod", "buffer" },
+					mysql = { "snippets", "dadbod", "buffer" },
+					plsql = { "snippets", "dadbod", "buffer" },
+				},
 				providers = {
 					["fuzzy-path"] = {
 						name = "Fuzzy Path",
@@ -63,6 +69,11 @@ return {
 						opts = {
 							filetypes = { "markdown", "json" }, -- optional
 						},
+					},
+					dadbod = {
+						name = "Dadbod",
+						module = "vim_dadbod_completion.blink",
+						score_offset = 100, -- Forces table/column names to the top of the completion menu
 					},
 				},
 			},

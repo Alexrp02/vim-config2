@@ -33,7 +33,6 @@ return {
 			vim.fn.sign_define("DapStopped", { text = "➡️", texthl = "", linehl = "", numhl = "" })
 			vim.fn.sign_define("DapBreakpointRejected", { text = "❌", texthl = "", linehl = "", numhl = "" })
 
-
 			-- KEYMAPS
 			vim.keymap.set("n", "<leader>dc", function()
 				dap.continue()
@@ -214,7 +213,7 @@ return {
 						"./node_modules/jest/bin/jest.js",
 						"${file}",
 						"--runInBand",
-						"--testPathIgnorePatterns=a^"
+						"--testPathIgnorePatterns=a^",
 					},
 					cwd = vim.fn.getcwd(),
 					console = "integratedTerminal",
