@@ -62,6 +62,16 @@ return {
 				require("dap.ui.widgets").hover()
 			end, { desc = "DAP Hover" })
 
+			-- Three-way exception breakpoint toggle: off → uncaught → all
+			local exception_state = 0
+			local exception_labels = { "off", "uncaught exceptions", "all exceptions" }
+			local exception_filters = { {}, { "uncaught" }, { "caught", "uncaught" } }
+			vim.keymap.set("n", "<Leader>dX", function()
+				exception_state = (exception_state % 3) + 1
+				dap.set_exception_breakpoints(exception_filters[exception_state])
+				vim.notify("Exception breakpoints: " .. exception_labels[exception_state], vim.log.levels.INFO)
+			end, { desc = "Cycle Exception Breakpoints" })
+
 			-- dap.adapters.firefox = {
 			-- 	type = "executable",
 			-- 	command = "node",
@@ -170,6 +180,15 @@ return {
 					request = "attach",
 					name = "Auto Attach to node process",
 					cwd = vim.fn.getcwd(),
+				})
+				table.insert(dap.configurations[lang], {
+					type = "pwa-node",
+					request = "attach",
+					name = "Auto Attach to node process (specific port)",
+					cwd = vim.fn.getcwd(),
+					port = function()
+						return vim.fn.input("Port: ", "9229")
+					end,
 				})
 				table.insert(dap.configurations[lang], {
 					type = "pwa-node",
