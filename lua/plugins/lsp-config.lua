@@ -16,7 +16,7 @@ return {
 		lazy = false,
 		dependencies = { "antosha417/nvim-lsp-file-operations" },
 		config = function()
-			-- 2. Master Capabilities Merge (Blink + File Operations)
+			-- 1. Master Capabilities Merge (Blink + File Operations)
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 
 			local ok_blink, blink = pcall(require, "blink.cmp")
@@ -29,7 +29,7 @@ return {
 				capabilities = vim.tbl_deep_extend("force", capabilities, file_ops.default_capabilities())
 			end
 
-			-- Apply merged capabilities globally to all servers
+			-- Apply merged capabilities globally to ALL servers using the new API
 			vim.lsp.config("*", {
 				capabilities = capabilities,
 			})
@@ -53,32 +53,48 @@ return {
 				vim.cmd("Trouble lsp_references")
 			end, {})
 
-			-- Astro Config
+			-- ==========================================
+			-- ASTRO CONFIGURATION
+			-- ==========================================
 			vim.lsp.config("astro", {
 				settings = {
 					astro = { updateImportsOnFileMove = { enabled = true } },
 				},
 			})
+			vim.lsp.enable("astro")
 
 			-- ==========================================
 			-- RUST CONFIGURATION (rust-analyzer)
 			-- ==========================================
+			local ra_cmd = { "rust-analyzer" } -- Default to your system RA
+
+			-- Check if we are in an ESP project by reading the local toolchain file
+			local toolchain_file = io.open(vim.fn.getcwd() .. "/rust-toolchain.toml", "r")
+			if toolchain_file then
+				local content = toolchain_file:read("*a")
+				toolchain_file:close()
+				if content:match('channel%s*=%s*"esp"') then
+					-- Force Neovim to use the 1.90.0 rust-analyzer to bypass the lockfile crash
+					ra_cmd = { "rustup", "run", "1.90.0", "rust-analyzer" }
+				end
+			end
+
 			vim.lsp.config("rust_analyzer", {
+				cmd = ra_cmd,
 				settings = {
 					["rust-analyzer"] = {
 						diagnostics = { enable = true },
 					},
 				},
 			})
+			vim.lsp.enable("rust_analyzer")
 
 			-- ==========================================
 			-- TYPESCRIPT CONFIGURATION (vtsls)
 			-- ==========================================
 			vim.lsp.config("vtsls", {
 				settings = {
-					vtsls = {
-						autoUseWorkspaceTsdk = true,
-					},
+					vtsls = { autoUseWorkspaceTsdk = true },
 					typescript = {
 						updateImportsOnFileMove = { enabled = "always" },
 						inlayHints = {
@@ -99,8 +115,11 @@ return {
 					},
 				},
 			})
+			vim.lsp.enable("vtsls")
 
-			-- Arduino Config
+			-- ==========================================
+			-- ARDUINO CONFIGURATION
+			-- ==========================================
 			vim.lsp.config("arduino_language_server", {
 				cmd = {
 					"arduino-language-server",
@@ -111,16 +130,8 @@ return {
 					"-fqbn",
 					"arduino:avr:mega",
 				},
-				filetypes = { "arduino", "ino" },
-				root_markers = { "*.ino", "platformio.ini", ".git" },
 			})
-
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = { "arduino", "ino" },
-				callback = function()
-					vim.lsp.enable("arduino_language_server")
-				end,
-			})
+			vim.lsp.enable("arduino_language_server")
 		end,
 	},
 	{
