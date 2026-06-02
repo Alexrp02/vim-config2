@@ -7,6 +7,9 @@ return {
 			global_keymaps = true,
 			global_keymaps_prefix = "<localleader>",
 			kulala_keymaps_prefix = "",
+			lsp = {
+				formatter = true
+			}
 		},
 	},
 }
