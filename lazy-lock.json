@@ -16,6 +16,7 @@
   "gitlab.nvim": { "branch": "develop", "commit": "3b49028a918ecd74a48ef07eb217449b915633e0" },
   "gitsigns.nvim": { "branch": "main", "commit": "dd3f588bacbeb041be6facf1742e42097f62165d" },
   "grug-far.nvim": { "branch": "main", "commit": "a5875fde04e2940a5060f8df9c453bcfcfe0a5c0" },
+  "jj-diffconflicts": { "branch": "main", "commit": "a2aa9a247b56d2c1a6f6be81bcf41c5450cc82ff" },
   "kulala.nvim": { "branch": "main", "commit": "6656c9d332735ca6a27725e0fb45a1715c4372d9" },
   "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
   "lazygit.nvim": { "branch": "main", "commit": "a04ad0dbc725134edbee3a5eea29290976695357" },
