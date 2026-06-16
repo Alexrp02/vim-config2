@@ -135,16 +135,6 @@ return {
 		end,
 	},
 	{
-		"jay-babu/mason-null-ls.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		dependencies = { "williamboman/mason.nvim", "nvimtools/none-ls.nvim" },
-		config = function()
-			require("mason-null-ls").setup({
-				ensure_installed = { "stylua", "black", "isort", "prettier" },
-			})
-		end,
-	},
-	{
 		"mason-org/mason-lspconfig.nvim",
 		opts = {},
 		dependencies = { { "mason-org/mason.nvim", opts = {} }, "neovim/nvim-lspconfig" },
