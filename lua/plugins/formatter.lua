@@ -19,6 +19,7 @@ return {
 				html = { "prettier" },
 				yaml = { "prettier" },
 				markdown = { "prettier" },
+				http = { "kulala-fmt" }
 			},
 			-- When no configured formatter is installed for the buffer (e.g. prettier
 			-- isn't installed via Mason), fall back to the language server's formatter
