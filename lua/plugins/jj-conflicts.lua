@@ -1,7 +1,7 @@
 return {
 	{
 		name = "jj-conflicts",
-		dir = vim.fn.stdpath("config"),
+		dir = vim.fn.stdpath("config") .. "/lua/jj-conflicts",
 		cmd = { "JjConflict" },
 		keys = {
 			{ "<leader>cj", "<cmd>JjConflict<cr>", desc = "jj: resolve conflict (current file)" },

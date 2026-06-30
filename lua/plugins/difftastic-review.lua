@@ -1,7 +1,7 @@
 return {
 	{
 		name = "difftastic-review",
-		dir = vim.fn.stdpath("config"),
+		dir = vim.fn.stdpath("config") .. "/lua/difftastic-review",
 		cmd = { "DifftasticReview", "DifftasticReviewCommit" },
 		keys = {
 			{ "<leader>dr", "<cmd>DifftasticReview<cr>", desc = "Difftastic Review (unstaged)" },
