@@ -224,6 +224,19 @@ return {
 					},
 				})
 				table.insert(dap.configurations[lang], {
+					type = "pwa-node",
+					request = "launch",
+					name = "Debug current file (tsx)",
+					-- Requires "tsx" as a devDependency in the target project.
+					-- Node doesn't auto-load .env like Bun does, so replicate that here.
+					runtimeExecutable = "pnpm",
+					runtimeArgs = { "exec", "tsx", "--env-file-if-exists=.env", "${file}" },
+					cwd = "${workspaceFolder}",
+					sourceMaps = true,
+					console = "integratedTerminal",
+					skipFiles = { "<node_internals>/**" },
+				})
+				table.insert(dap.configurations[lang], {
 					name = "Debug Current Jest file",
 					type = "pwa-node",
 					request = "launch",
